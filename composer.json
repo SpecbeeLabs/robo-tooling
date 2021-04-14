@@ -1,0 +1,25 @@
+{
+    "name": "specbee/robo-tooling",
+    "type": "library",
+    "description": "Robo commands for use to setup, build, test and deploy Drupal projects.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Malabya",
+            "email": "malabya@specbee.com"
+        }
+    ],
+    "require": {
+        "consolidation/robo": "^1.4 || ^2",
+        "drush/drush": "^8 || ^10",
+        "webflo/drupal-finder": "^1.2"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "SbRoboTooling\\": "src"
+        }
+    }
+}
