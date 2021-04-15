@@ -4,7 +4,6 @@ namespace SbRoboTooling\Robo\Plugin\Commands;
 
 use Robo\Exception\TaskException;
 use Robo\Result;
-use Robo\Robo;
 use Robo\Tasks;
 use SbRoboTooling\Robo\Traits\UtilityTrait;
 
@@ -35,13 +34,12 @@ class InitCommand extends Tasks
             $this->io()->title("Initializing empty Git repository in " . $this->getDocroot());
             $this->say('setup:git');
             chdir($this->getDocroot());
-            $config = Robo::config();
             $result = $this->taskGitStack()
             ->stopOnFail()
             ->exec("git init")
             ->commit('Initial commit.', '--allow-empty')
             ->add('-A')
-            ->commit($config->get('project.prefix') . '-000: Created project from Specbee starterkit.')
+            ->commit($this->getConfigValue('project.prefix') . '-000: Created project from Specbee starterkit.')
             ->interactive(false)
             ->printOutput(false)
             ->printMetadata(false)
@@ -76,8 +74,7 @@ class InitCommand extends Tasks
     public function copyDrushAliases()
     {
         $this->say('copy:default-drush-alias');
-        $config = Robo::config();
-        if (!$config->get('project.machine_name')) {
+        if (!$this->getConfigValue('project.machine_name')) {
             throw new TaskException(
                 $this,
                 "Require Robo configuration 'project.machine_name' not found in the configuration file."
@@ -85,7 +82,7 @@ class InitCommand extends Tasks
         }
 
         $drushPath = $this->getDocroot() . '/drush/sites';
-        $aliasPath = $drushPath . '/' . $config->get('project.machine_name') . '.site.yml';
+        $aliasPath = $drushPath . '/' . $this->getConfigValue('project.machine_name') . '.site.yml';
 
         // Skip if alias file is already generated.
         if (file_exists($aliasPath)) {
@@ -125,17 +122,16 @@ class InitCommand extends Tasks
     public function confDrushAlias()
     {
         $this->say('setup:drupal-alias');
-        $config = Robo::config();
-        $drushFile = $this->getDocroot() . '/drush/sites/' . $config->get('project.machine_name') . '.site.yml';
+        $drushFile = $this->getDocroot() . '/drush/sites/' . $this->getConfigValue('project.machine_name') . '.site.yml';
         if (
-            empty($config->get('remote.dev.host')) ||
-            empty($config->get('remote.dev.user')) ||
-            empty($config->get('remote.dev.root')) ||
-            empty($config->get('remote.dev.uri')) ||
-            empty($config->get('remote.stage.host')) ||
-            empty($config->get('remote.stage.user')) ||
-            empty($config->get('remote.stage.root')) ||
-            empty($config->get('remote.stage.uri'))
+            empty($this->getConfigValue('remote.dev.host')) ||
+            empty($this->getConfigValue('remote.dev.user')) ||
+            empty($this->getConfigValue('remote.dev.root')) ||
+            empty($this->getConfigValue('remote.dev.uri')) ||
+            empty($this->getConfigValue('remote.stage.host')) ||
+            empty($this->getConfigValue('remote.stage.user')) ||
+            empty($this->getConfigValue('remote.stage.root')) ||
+            empty($this->getConfigValue('remote.stage.uri'))
         ) {
             $this->io()->newLine();
             $this->io()->warning('Drush aliases were not properly configured. Please add the information about remote server and run the command again.');
@@ -143,7 +139,7 @@ class InitCommand extends Tasks
         }
         $task = $this->taskReplaceInFile($drushFile)
         ->from(['${REMOTE_DEV_HOST}', '${REMOTE_DEV_USER}', '${REMOTE_DEV_ROOT}', '${REMOTE_DEV_URI}', '${REMOTE_STAGE_HOST}', '${REMOTE_STAGE_USER}', '${REMOTE_STAGE_ROOT}', '${REMOTE_STAGE_URI}'])
-        ->to([$config->get('remote.dev.host'), $config->get('remote.dev.user'), $config->get('remote.dev.root'), $config->get('remote.dev.uri'), $config->get('remote.stage.host'), $config->get('remote.stage.user'), $config->get('remote.stage.root'), $config->get('remote.stage.uri')])
+        ->to([$this->getConfigValue('remote.dev.host'), $this->getConfigValue('remote.dev.user'), $this->getConfigValue('remote.dev.root'), $this->getConfigValue('remote.dev.uri'), $this->getConfigValue('remote.stage.host'), $this->getConfigValue('remote.stage.user'), $this->getConfigValue('remote.stage.root'), $this->getConfigValue('remote.stage.uri')])
         ->run();
 
         if (!$task->wasSuccessful()) {
@@ -157,7 +153,6 @@ class InitCommand extends Tasks
     public function confLando()
     {
         $this->say('setup:lando');
-        $config = Robo::config();
         $landoFile = $this->getDocroot() . '/.lando.yml';
         if (!file_exists($landoFile)) {
             $confirm = $this->io()->confirm('Lando file does not exist. Do you want to initialize lando for local development?', true);
@@ -172,7 +167,7 @@ class InitCommand extends Tasks
         }
         $task = $this->taskReplaceInFile($landoFile)
         ->from('${PROJECT_NAME}')
-        ->to($config->get('project.machine_name'))
+        ->to($this->getConfigValue('project.machine_name'))
         ->run();
 
         if (!$task->wasSuccessful()) {
@@ -189,7 +184,6 @@ class InitCommand extends Tasks
     public function confGrumphp()
     {
         $this->say('setup:grumphp');
-        $config = Robo::config();
         $grumphpFile = $this->getDocroot() . '/grumphp.yml';
         if (!file_exists($grumphpFile)) {
             $confirm = $this->io()->confirm('Grumphp configuration not found. Do you want to initialize Grumphp?', true);
@@ -206,7 +200,7 @@ class InitCommand extends Tasks
         }
         $task = $this->taskReplaceInFile($grumphpFile)
         ->from('${PROJECT_PREFIX}')
-        ->to($config->get('project.prefix'))
+        ->to($this->getConfigValue('project.prefix'))
         ->run();
 
         if (!$task->wasSuccessful()) {

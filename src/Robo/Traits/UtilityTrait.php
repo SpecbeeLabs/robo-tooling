@@ -3,10 +3,27 @@
 namespace SbRoboTooling\Robo\Traits;
 
 use DrupalFinder\DrupalFinder;
+use Robo\Robo;
 use Symfony\Component\Yaml\Yaml;
 
 trait UtilityTrait
 {
+
+    /**
+     * Undocumented function
+     *
+     * @param string $key
+     *   The config to fetch.
+     *
+     * @return string
+     *   The config value.
+     */
+    public function getConfigValue($key)
+    {
+        $config = Robo::config();
+        return $config->get($key);
+    }
+
     /**
      * Get the absolute path to the docroot.
      *
