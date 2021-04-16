@@ -5,7 +5,7 @@ namespace SbRoboTooling\Robo\Plugin\Commands;
 use Robo\Tasks;
 use SbRoboTooling\Robo\Traits\UtilityTrait;
 
-class DrupalInstallCommand extends Tasks
+class DrupalCommands extends Tasks
 {
     use UtilityTrait;
 

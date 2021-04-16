@@ -7,9 +7,11 @@ project:
   # Used for enforcing git commit message.
   prefix: SB
   human_name: "Specbee"
-  git: git@bitbucket.org:specbee/project-repo.git
+  git:
+    remote: git@bitbucket.org:specbee/project-repo.git
   # Configure the installation profile and the theme being used in the site.
   config:
+    webroot: docroot
     profile: lightning
     theme: NULL
     # Configure the admin account details

@@ -10,7 +10,7 @@ use SbRoboTooling\Robo\Traits\UtilityTrait;
 /**
  * Robo commands to initialize a project.
  */
-class InitCommand extends Tasks
+class InitCommands extends Tasks
 {
     use UtilityTrait;
 
@@ -36,7 +36,7 @@ class InitCommand extends Tasks
             chdir($this->getDocroot());
             $result = $this->taskGitStack()
             ->stopOnFail()
-            ->exec("git init")
+            ->exec('git init')
             ->commit('Initial commit.', '--allow-empty')
             ->add('-A')
             ->commit($this->getConfigValue('project.prefix') . '-000: Created project from Specbee starterkit.')
@@ -44,6 +44,29 @@ class InitCommand extends Tasks
             ->printOutput(false)
             ->printMetadata(false)
             ->run();
+
+            // Switch to develop branch once master is setup.
+            $this->io()->newLine();
+            $this->io()->section("Switching to develop branch.");
+            $result = $this->taskGitStack()
+            ->stopOnFail()
+            ->exec('git branch develop')
+            ->checkout('develop')
+            ->run();
+
+            $remote = $this->taskExec('git remote')->run()->getMessage();
+            if (empty($remote)) {
+                $confirm = $this->io()->confirm('Do you want to add the remote "orgin" Git remote URL ' . $this->getConfigValue('project.git.remote') . '?', true);
+                if (!$confirm) {
+                    return Result::cancelled();
+                }
+
+                $result = $this->taskExec("git remote")
+                ->arg('add')
+                ->arg('origin')
+                ->arg($this->getConfigValue('project.git.remote'))
+                ->run();
+            }
 
             // Throw exception is the command fails.
             if (!$result->wasSuccessful()) {
@@ -138,8 +161,30 @@ class InitCommand extends Tasks
             return;
         }
         $task = $this->taskReplaceInFile($drushFile)
-        ->from(['${REMOTE_DEV_HOST}', '${REMOTE_DEV_USER}', '${REMOTE_DEV_ROOT}', '${REMOTE_DEV_URI}', '${REMOTE_STAGE_HOST}', '${REMOTE_STAGE_USER}', '${REMOTE_STAGE_ROOT}', '${REMOTE_STAGE_URI}'])
-        ->to([$this->getConfigValue('remote.dev.host'), $this->getConfigValue('remote.dev.user'), $this->getConfigValue('remote.dev.root'), $this->getConfigValue('remote.dev.uri'), $this->getConfigValue('remote.stage.host'), $this->getConfigValue('remote.stage.user'), $this->getConfigValue('remote.stage.root'), $this->getConfigValue('remote.stage.uri')])
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_DEV_HOST}')
+        ->to($this->getConfigValue('remote.dev.host'))
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_DEV_USER}')
+        ->to($this->getConfigValue('remote.dev.user'))
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_DEV_ROOT}')
+        ->to($this->getConfigValue('remote.dev.root'))
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_DEV_URI}')
+        ->to($this->getConfigValue('remote.dev.uri'))
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_STAGE_HOST}')
+        ->to($this->getConfigValue('remote.stage.host'))
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_STAGE_USER}')
+        ->to($this->getConfigValue('remote.stage.user'))
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_STAGE_ROOT}')
+        ->to($this->getConfigValue('remote.stage.root'))
+        ->taskReplaceInFile($drushFile)
+        ->from('${REMOTE_STAGE_URI}')
+        ->to($this->getConfigValue('remote.stage.uri'))
         ->run();
 
         if (!$task->wasSuccessful()) {
@@ -168,6 +213,9 @@ class InitCommand extends Tasks
         $task = $this->taskReplaceInFile($landoFile)
         ->from('${PROJECT_NAME}')
         ->to($this->getConfigValue('project.machine_name'))
+        ->taskReplaceInFile($landoFile)
+        ->from('${WEBROOT}')
+        ->to($this->getConfigValue('project.config.webroot'))
         ->run();
 
         if (!$task->wasSuccessful()) {
