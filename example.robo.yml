@@ -9,18 +9,20 @@ project:
   human_name: "Specbee"
   git:
     remote: git@bitbucket.org:specbee/project-repo.git
-  # Configure the installation profile and the theme being used in the site.
+# Configure the installation profile and the theme being used in the site.
+drupal:
+  webroot: docroot
+  profile: lightning
+  # Configure the theme path and build command.
+  theme:
+    path: web/themes/custom/theme
+    build_command: yarn build
+  # Configure the admin account details
+  account:
+    name: jarvis
+    mail: no-reply@specbee.in
   config:
-    webroot: docroot
-    profile: lightning
-    # Configure the theme path and build command.
-    theme:
-      path: web/themes/custom/theme
-      build_command: yarn build
-    # Configure the admin account details
-    account:
-      name: jarvis
-      mail: no-reply@specbee.in
+    path: '../config/sync'
 # Used for setting up the Drush aliases. To properly use the Drush aliases remotely your SSH
 # keys needs to be added to the environments.
 remotes:

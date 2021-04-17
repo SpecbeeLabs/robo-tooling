@@ -80,9 +80,9 @@ class InitCommands extends Tasks
     /**
      * Initialize and configure project tools.
      *
-     * @command init:repo
+     * @command init:project
      */
-    public function initRepo()
+    public function initProject()
     {
         $this->io()->title("Initializing and configuring project tool at " . $this->getDocroot());
         $this->copyDrushAliases();

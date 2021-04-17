@@ -1,7 +1,7 @@
 name: ${PROJECT_NAME}
 recipe: drupal9
 config:
-  webroot: docroot
+  webroot: ${WEBROOT}
   php: 7.4
   xdebug: false
   drush: '*'
@@ -13,7 +13,7 @@ services:
       - npm install -g gulp-cli > "/dev/null" 2>&1
       - npm install -g yarn > "/dev/null" 2>&1
     environment:
-      DRUSH_OPTIONS_ROOT: /app/docroot
+      DRUSH_OPTIONS_ROOT: /app/${WEBROOT}
       DRUSH_OPTIONS_URI: ${PROJECT_NAME}.lndo.site
       MINK_DRIVER_ARGS: '["chrome", null, "http://chromedriver:4444/wd/hub"]'
       MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", null, "http://chromedriver:4444/wd/hub"]'
@@ -22,7 +22,7 @@ services:
       SIMPLETEST_BASE_URL: "https://${PROJECT_NAME}.lndo.site"
       SYMFONY_DEPRECATIONS_HELPER: 'disabled'
       PHP_IDE_CONFIG: "serverName=appserver"
-      BEHAT_PARAMS: '{"extensions" : {"Behat\\MinkExtension" : {"base_url" : "http://${PROJECT_NAME}.lndo.site"}, "Drupal\\DrupalExtension" : {"drush" :   {  "root":  "/app/docroot" }}}}'
+      BEHAT_PARAMS: '{"extensions" : {"Behat\\MinkExtension" : {"base_url" : "http://${PROJECT_NAME}.lndo.site"}, "Drupal\\DrupalExtension" : {"drush" :   {  "root":  "/app/${WEBROOT}" }}}}'
   chromedriver:
     type: compose
     services:

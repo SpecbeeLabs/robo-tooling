@@ -20,7 +20,7 @@ class DrupalToolingCommands extends DrupalCommands
         $this->drupalInstall($opts);
 
         // Don't try to import configurations for new installation.
-        if (file_exists($this->getDocroot() . '/config/sync/core.extension.yml')) {
+        if (file_exists($this->getDocroot() . '/' . $this->getConfigValue('drupal.config.path') . '/core.extension.yml')) {
             $this->importConfig();
             $this->cacheRebuild();
         }
@@ -42,11 +42,20 @@ class DrupalToolingCommands extends DrupalCommands
      *
      * @return void
      */
-    public function sync()
+    public function sync($opts = ['skip-import|s' => false, 'db' => false, 'files' => false])
     {
-        $this->io()->title('Syncing database and files from ' . $this->getConfigValue('remote.sync'));
-        $this->syncDb();
-        $this->syncFiles();
+        if ($opts['db']) {
+            $this->io()->title('Syncing database ' . $this->getConfigValue('sync.remote'));
+            $this->syncDb($opts);
+        } elseif ($opts['files']) {
+            $this->io()->title('Syncing public files from ' . $this->getConfigValue('sync.remote'));
+            $this->syncFiles();
+        } else {
+            $this->io()->title('Syncing database and files from ' . $this->getConfigValue('sync.remote'));
+            $this->syncDb($opts);
+            $this->syncFiles();
+        }
+
         $this->cacheRebuild();
     }
 }

@@ -27,11 +27,11 @@ class DrupalCommands extends Tasks
         $this->say('drupal:install');
         $task = $this->drush()
         ->args('site-install')
-        ->arg($this->getConfigValue('project.config.profile'))
+        ->arg($this->getConfigValue('drupal.profile'))
         ->option('site-name', $this->getConfigValue('project.human_name'), '=')
-        ->option('site-mail', $this->getConfigValue('project.config.account.mail'), '=')
-        ->option('account-name', $this->getConfigValue('project.config.account.name'), '=')
-        ->option('account-mail', $this->getConfigValue('project.config.account.mail'), '=');
+        ->option('site-mail', $this->getConfigValue('drupal.account.mail'), '=')
+        ->option('account-name', $this->getConfigValue('drupal.account.name'), '=')
+        ->option('account-mail', $this->getConfigValue('drupal.account.mail'), '=');
 
         if ($opts['no-interaction']) {
             $task->arg('--no-interaction');
@@ -44,7 +44,7 @@ class DrupalCommands extends Tasks
         }
 
         // Check if config directory exists.
-        if (file_exists($this->getDocroot() . '/config/sync/core.extension.yml')) {
+        if (file_exists($this->getDocroot() . '/' . $this->getConfigValue('drupal.config.path') . '/core.extension.yml')) {
             $task->option('existing-config');
         }
 
@@ -90,7 +90,7 @@ class DrupalCommands extends Tasks
     *
     * @command drupal:update:db
     */
-    public function updateDatabase($opts = ['skip-import|s' => false])
+    public function updateDatabase()
     {
         $this->say('drupal:update:db');
         $this->cacheRebuild();
@@ -103,10 +103,6 @@ class DrupalCommands extends Tasks
             throw new TaskException($task, "Failed to execute database updates!");
         }
 
-        if ($opts['skip-import']) {
-            $this->importConfig();
-        }
-
         return $task;
     }
 
@@ -115,7 +111,7 @@ class DrupalCommands extends Tasks
     *
     * @command drupal:sync:db
     */
-    public function syncDb()
+    public function syncDb($opts = ['skip-import|s' => false])
     {
         $this->say('sync:db');
         $remote_alias = '@' . $this->getConfigValue('project.machine_name') . '.' . $this->getConfigValue('sync.remote');
@@ -142,6 +138,10 @@ class DrupalCommands extends Tasks
 
         if (!$result->wasSuccessful()) {
             throw new TaskException($result, "Failed to sync database from the remote server");
+        }
+
+        if (!$opts['skip-import']) {
+            $this->importConfig();
         }
 
         return $result;
