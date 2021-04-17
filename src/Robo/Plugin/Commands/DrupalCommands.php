@@ -15,7 +15,7 @@ class DrupalCommands extends Tasks
      *
      * @var string
      */
-    private const DB_URL = 'mysql://drupal:drupal@database/drupal';
+    protected const DB_URL = 'mysql://drupal:drupal@database/drupal';
 
     /**
      * Setup a fresh Drupal site from existing config if present.
@@ -57,25 +57,6 @@ class DrupalCommands extends Tasks
     }
 
     /**
-     * Private methid to rebuild Drupal cache.
-     */
-    private function cacheRebuild()
-    {
-        $this->say('Rebuilding cache...');
-        $task = $this->drush()
-        ->arg('cache-rebuild')
-        ->arg('--no-interaction')
-        ->arg('--ansi')
-        ->run();
-
-        if (!$task->wasSuccessful()) {
-            throw new TaskException($task, "Something went wrong!!!");
-        }
-
-        return $task;
-    }
-
-    /**
     * Import pending configurations.
     *
     * @command drupal:import:config
@@ -109,7 +90,7 @@ class DrupalCommands extends Tasks
     *
     * @command drupal:update:db
     */
-    public function updateDatabase()
+    public function updateDatabase($opts = ['skip-import|s' => false])
     {
         $this->say('drupal:update:db');
         $this->cacheRebuild();
@@ -120,6 +101,10 @@ class DrupalCommands extends Tasks
         ->run();
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Failed to execute database updates!");
+        }
+
+        if ($opts['skip-import']) {
+            $this->importConfig();
         }
 
         return $task;

@@ -13,7 +13,10 @@ project:
   config:
     webroot: docroot
     profile: lightning
-    theme: NULL
+    # Configure the theme path and build command.
+    theme:
+      path: web/themes/custom/theme
+      build_command: yarn build
     # Configure the admin account details
     account:
       name: jarvis

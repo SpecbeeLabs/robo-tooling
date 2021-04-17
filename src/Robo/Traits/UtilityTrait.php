@@ -3,6 +3,7 @@
 namespace SbRoboTooling\Robo\Traits;
 
 use DrupalFinder\DrupalFinder;
+use Robo\Exception\TaskException;
 use Robo\Robo;
 use Symfony\Component\Yaml\Yaml;
 
@@ -56,7 +57,7 @@ trait UtilityTrait
     /**
      * Installs composer dependencies.
      */
-    public function installDependencies()
+    public function installComposerDependencies()
     {
         chdir($this->getDocroot());
         return $this->taskComposerInstall()->ansi()->noInteraction();
@@ -65,11 +66,30 @@ trait UtilityTrait
     /**
      * Return drush with default arguments.
      */
-    protected function drush()
+    public function drush()
     {
-      // Drush needs an absolute path to the docroot.
+        // Drush needs an absolute path to the docroot.
         $docroot = $this->getDocroot() . '/docroot';
         return $this->taskExec('vendor/bin/drush')
         ->option('root', $docroot, '=');
+    }
+
+    /**
+     * Private methid to rebuild Drupal cache.
+     */
+    public function cacheRebuild()
+    {
+        $this->say('Rebuilding cache...');
+        $task = $this->drush()
+        ->arg('cache-rebuild')
+        ->arg('--no-interaction')
+        ->arg('--ansi')
+        ->run();
+
+        if (!$task->wasSuccessful()) {
+            throw new TaskException($task, "Something went wrong!!!");
+        }
+
+        return $task;
     }
 }
