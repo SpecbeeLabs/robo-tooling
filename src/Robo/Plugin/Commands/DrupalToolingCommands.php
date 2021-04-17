@@ -17,6 +17,7 @@ class DrupalToolingCommands extends DrupalCommands
     {
         $this->io()->title('Setting up a new Drupal site - ' . $this->getConfigValue('project.human_name'));
         $this->installComposerDependencies();
+        $this->buildFrontendReqs();
         $this->drupalInstall($opts);
 
         // Don't try to import configurations for new installation.

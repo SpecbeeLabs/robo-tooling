@@ -63,6 +63,17 @@ trait UtilityTrait
         return $this->taskComposerInstall()->ansi()->noInteraction();
     }
 
+    public function buildFrontendReqs()
+    {
+        if (file_exists($this->getConfigValue('drupal.theme.path'))) {
+            chdir($this->getConfigValue('drupal.theme.path'));
+            $this->taskExec($this->getConfigValue('drupal.theme.build'))->run();
+            $this->taskExec($this->getConfigValue('drupal.theme.compile'))->run();
+        } else {
+            $this->io()->caution('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
+        }
+    }
+
     /**
      * Return drush with default arguments.
      */
