@@ -16,7 +16,7 @@ class InitCommands extends Tasks
 
     public function __construct()
     {
-        if (!file_exists("./robo.yml")) {
+        if (!file_exists($this->getDocroot() . "/robo.yml")) {
             throw new TaskException(
                 $this,
                 "No Robo configuration file detected.

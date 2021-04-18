@@ -60,7 +60,7 @@ trait UtilityTrait
     public function installComposerDependencies()
     {
         chdir($this->getDocroot());
-        return $this->taskComposerInstall()->ansi()->noInteraction();
+        return $this->taskComposerInstall()->ansi()->noInteraction()->run();
     }
 
     public function buildFrontendReqs()
@@ -81,7 +81,8 @@ trait UtilityTrait
     {
         // Drush needs an absolute path to the docroot.
         $docroot = $this->getDocroot() . '/docroot';
-        return $this->taskExec('vendor/bin/drush')
+        $drushBin = $this->getDocroot() . '/vendor/bin/drush';
+        return $this->taskExec($drushBin)
         ->option('root', $docroot, '=');
     }
 
