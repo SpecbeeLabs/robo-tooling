@@ -215,7 +215,7 @@ class InitCommands extends Tasks
         ->to($this->getConfigValue('project.machine_name'))
         ->taskReplaceInFile($landoFile)
         ->from('${WEBROOT}')
-        ->to($this->getConfigValue('project.config.webroot'))
+        ->to($this->getConfigValue('drupal.webroot'))
         ->run();
 
         if (!$task->wasSuccessful()) {
