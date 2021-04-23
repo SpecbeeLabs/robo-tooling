@@ -239,7 +239,8 @@ class InitCommands extends Tasks
                 return Result::cancelled();
             }
 
-            $this->taskComposerRequire('vijaycs85/drupal-quality-checker')
+            $this->taskComposerRequire()
+            ->dependency('vijaycs85/drupal-quality-checker')
             ->dev()
             ->noInteraction()
             ->run();
