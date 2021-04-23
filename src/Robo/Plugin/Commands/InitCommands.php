@@ -233,26 +233,18 @@ class InitCommands extends Tasks
     {
         $this->say('setup:grumphp');
         $grumphpFile = $this->getDocroot() . '/grumphp.yml';
-        if (!file_exists($grumphpFile)) {
-            $confirm = $this->io()->confirm('Grumphp configuration not found. Do you want to initialize Grumphp?', true);
-            if (!$confirm) {
-                return Result::cancelled();
-            }
+        $this->taskFilesystemStack()
+        ->touch($grumphpFile)
+        ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/assets/grumphp.yml", $grumphpFile, true)
+        ->run();
 
-            $this->io()->note("Ensure Grumphp is installed. If not run `composer require vijaycs85/drupal-quality-checker` to install it.");
-
-            $this->taskFilesystemStack()
-            ->touch($grumphpFile)
-            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/assets/grumphp.yml", $grumphpFile, true)
-            ->run();
-        }
         $task = $this->taskReplaceInFile($grumphpFile)
         ->from('${PROJECT_PREFIX}')
         ->to($this->getConfigValue('project.prefix'))
         ->run();
 
         if (!$task->wasSuccessful()) {
-            throw new TaskException($task, "Could not setup Lando.");
+            throw new TaskException($task, "Could not setup Grumphp.");
         } else {
             $this->io()->newLine();
             $this->io()->success("Grumphp is successfully configured to watch your commits.");

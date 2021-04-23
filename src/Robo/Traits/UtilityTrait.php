@@ -66,9 +66,16 @@ trait UtilityTrait
     public function buildFrontendReqs()
     {
         if (file_exists($this->getConfigValue('drupal.theme.path'))) {
-            chdir($this->getConfigValue('drupal.theme.path'));
-            $this->taskExec($this->getConfigValue('drupal.theme.build'))->run();
-            $this->taskExec($this->getConfigValue('drupal.theme.compile'))->run();
+            if (!empty($this->getConfigValue('drupal.theme.build'))) {
+                $this->taskExec($this->getConfigValue('drupal.theme.build'))
+                ->dir($this->getConfigValue('drupal.theme.path'))
+                ->run();
+            }
+            if (!empty($this->getConfigValue('drupal.theme.compile'))) {
+                $this->taskExec($this->getConfigValue('drupal.theme.compile'))
+                ->dir($this->getConfigValue('drupal.theme.path'))
+                ->run();
+            }
         } else {
             $this->io()->caution('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
         }
