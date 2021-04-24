@@ -27,6 +27,8 @@ class InitCommands extends Tasks
 
     /**
      * Initialize Git and make an empty initial commit.
+     *
+     * @command init:git
      */
     public function initGit()
     {
@@ -140,8 +142,8 @@ class InitCommands extends Tasks
     }
 
     /**
-   * Setup the Drupal aliases.
-   */
+     * Setup the Drupal aliases.
+     */
     public function confDrushAlias()
     {
         $this->say('setup:drupal-alias');
@@ -193,8 +195,8 @@ class InitCommands extends Tasks
     }
 
     /**
-    * Setup lando.yml for local environment.
-    */
+     * Setup lando.yml for local environment.
+     */
     public function confLando()
     {
         $this->say('setup:lando');
@@ -227,8 +229,8 @@ class InitCommands extends Tasks
     }
 
     /**
-    * Setup Grumphp file.
-    */
+     * Setup Grumphp file.
+     */
     public function confGrumphp()
     {
         $this->say('setup:grumphp');

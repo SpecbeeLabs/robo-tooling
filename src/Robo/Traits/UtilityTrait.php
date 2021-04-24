@@ -63,7 +63,7 @@ trait UtilityTrait
         return $this->taskComposerInstall()->ansi()->noInteraction()->run();
     }
 
-    public function buildFrontendReqs()
+    public function buildTheme()
     {
         if (file_exists($this->getConfigValue('drupal.theme.path'))) {
             if (!empty($this->getConfigValue('drupal.theme.build'))) {

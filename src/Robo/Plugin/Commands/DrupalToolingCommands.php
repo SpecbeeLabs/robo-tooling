@@ -29,6 +29,10 @@ class DrupalToolingCommands extends DrupalCommands
 
     /**
      * Update & refresh Drupal database udpates and import pending config.
+     *
+     * @command drupal:udpate
+     *
+     * @aliases du
      */
     public function drupalUpdate()
     {
@@ -41,7 +45,7 @@ class DrupalToolingCommands extends DrupalCommands
     /**
      * Sync database and files from remote envrionment.
      *
-     * @return void
+     * @command sync
      */
     public function sync($opts = ['skip-import|s' => false, 'db' => false, 'files' => false])
     {

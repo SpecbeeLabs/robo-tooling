@@ -21,6 +21,8 @@ class DrupalCommands extends Tasks
      * Setup a fresh Drupal site from existing config if present.
      *
      * @command drupal:site:install
+     *
+     * @aliases dsi
      */
     public function drupalInstall($opts = ['db-url' => '', 'no-interaction|n' => false])
     {
@@ -57,10 +59,12 @@ class DrupalCommands extends Tasks
     }
 
     /**
-    * Import pending configurations.
-    *
-    * @command drupal:import:config
-    */
+     * Import pending configurations.
+     *
+     * @command drupal:import:config
+     *
+     * @aliases dic
+     */
     public function importConfig()
     {
         $this->say('import:config');
@@ -86,10 +90,12 @@ class DrupalCommands extends Tasks
     }
 
     /**
-    * Update database.
-    *
-    * @command drupal:update:db
-    */
+     * Update database.
+     *
+     * @command drupal:update:db
+     *
+     * @aliases dudb
+     */
     public function updateDatabase()
     {
         $this->say('drupal:update:db');
@@ -107,10 +113,12 @@ class DrupalCommands extends Tasks
     }
 
     /**
-    * Sync database from remote server.
-    *
-    * @command drupal:sync:db
-    */
+     * Sync database from remote server.
+     *
+     * @command drupal:sync:db
+     *
+     * @aliases dsdb
+     */
     public function syncDb($opts = ['skip-import|s' => false])
     {
         $this->say('sync:db');
@@ -148,10 +156,12 @@ class DrupalCommands extends Tasks
     }
 
     /**
-    * Sync files from remote server.
-    *
-    * @command drupal:sync:files
-    */
+     * Sync files from remote server.
+     *
+     * @command drupal:sync:files
+     *
+     * @aliases dsf
+     */
     public function syncFiles()
     {
         $this->say('sync:files');
