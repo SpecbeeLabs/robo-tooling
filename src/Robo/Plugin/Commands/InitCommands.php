@@ -2,6 +2,7 @@
 
 namespace SbRoboTooling\Robo\Plugin\Commands;
 
+use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
@@ -30,7 +31,7 @@ class InitCommands extends Tasks
      *
      * @command init:git
      */
-    public function initGit()
+    public function initGit(): Result
     {
         if (!file_exists($this->getDocroot() . "/.git")) {
             $this->io()->title("Initializing empty Git repository in " . $this->getDocroot());
@@ -84,7 +85,7 @@ class InitCommands extends Tasks
      *
      * @command init:project
      */
-    public function initProject()
+    public function initProject(): void
     {
         $this->io()->title("Initializing and configuring project tool at " . $this->getDocroot());
         $this->copyDrushAliases();
@@ -96,7 +97,7 @@ class InitCommands extends Tasks
     /**
      * Copy default drush aliases file.
      */
-    public function copyDrushAliases()
+    public function copyDrushAliases(): Result
     {
         $this->say('copy:default-drush-alias');
         if (!$this->getConfigValue('project.machine_name')) {
@@ -112,9 +113,12 @@ class InitCommands extends Tasks
         // Skip if alias file is already generated.
         if (file_exists($aliasPath)) {
             $this->io()->newLine();
-            $this->yell('Drush alias file exists. Skipping');
+            $this->io()->note('Drush alias file exists. Skipping...');
             $this->io()->newLine();
-            return;
+            return $this->taskExecStack()
+            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+            ->exec('echo Skipping...')
+            ->run();
         }
 
         // Check if default.sites.yml exisits (the file will exist if project is created using specbee/drupal-start)
@@ -139,12 +143,14 @@ class InitCommands extends Tasks
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Could not copy Drush aliases.");
         }
+
+        return $task;
     }
 
     /**
      * Setup the Drupal aliases.
      */
-    public function confDrushAlias()
+    public function confDrushAlias(): Result
     {
         $this->say('setup:drupal-alias');
         $drushFile = $this->getDocroot() . '/drush/sites/' . $this->getConfigValue('project.machine_name') . '.site.yml';
@@ -160,7 +166,10 @@ class InitCommands extends Tasks
         ) {
             $this->io()->newLine();
             $this->io()->warning('Drush aliases were not properly configured. Please add the information about remote server and run the command again.');
-            return;
+            return $this->taskExecStack()
+            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+            ->exec('echo Skipping...')
+            ->run();
         }
         $task = $this->taskReplaceInFile($drushFile)
         ->taskReplaceInFile($drushFile)
@@ -192,12 +201,14 @@ class InitCommands extends Tasks
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Could not configure Drush aliases.");
         }
+
+        return $task;
     }
 
     /**
      * Setup lando.yml for local environment.
      */
-    public function confLando()
+    public function confLando(): Result
     {
         $this->say('setup:lando');
         $landoFile = $this->getDocroot() . '/.lando.yml';
@@ -212,6 +223,7 @@ class InitCommands extends Tasks
             ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/assets/.lando.yml", $landoFile, true)
             ->run();
         }
+
         $task = $this->taskReplaceInFile($landoFile)
         ->from('${PROJECT_NAME}')
         ->to($this->getConfigValue('project.machine_name'))
@@ -226,12 +238,14 @@ class InitCommands extends Tasks
             $this->io()->newLine();
             $this->io()->success("Lando was successfully initialized. Run `lando start` to spin up the docker containers");
         }
+
+        return $task;
     }
 
     /**
      * Setup Grumphp file.
      */
-    public function confGrumphp()
+    public function confGrumphp(): Result
     {
         $this->say('setup:grumphp');
         $grumphpFile = $this->getDocroot() . '/grumphp.yml';
@@ -263,5 +277,7 @@ class InitCommands extends Tasks
             $this->io()->newLine();
             $this->io()->success("Grumphp is successfully configured to watch your commits.");
         }
+
+        return $task;
     }
 }

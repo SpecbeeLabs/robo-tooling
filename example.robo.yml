@@ -9,6 +9,7 @@ project:
   human_name: "Specbee"
   git:
     remote: git@bitbucket.org:specbee/project-repo.git
+
 # Configure the installation profile and the theme being used in the site.
 drupal:
   webroot: docroot
@@ -25,7 +26,30 @@ drupal:
     name: jarvis
     mail: no-reply@specbee.in
   config:
-    path: '../config/sync'
+    path: config/sync
+
+# Configure PHPCS settings & options.
+phpcs:
+  code_paths:
+    - ${drupal.webroot}/modules/custom
+    - ${drupal.webroot}/themes/custom
+  check_extensions:
+    - php
+    - module
+    - inc
+    - install
+    - test
+    - profile
+    - theme
+    - info
+    - txt
+  ignore_paths:
+    - ${drupal.webroot}/themes/*/dist/
+    - ${drupal.webroot}/themes/*/node_modules
+  standards:
+    - Drupal
+    - DrupalPractice
+
 # Used for setting up the Drush aliases. To properly use the Drush aliases remotely your SSH
 # keys needs to be added to the environments.
 remotes:
@@ -39,6 +63,7 @@ remotes:
     user: ""
     root: ""
     uri: ""
+
 # Specify from where the database and files should be synced from.
 sync:
   remote: "dev"

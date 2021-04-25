@@ -3,9 +3,13 @@
 namespace SbRoboTooling\Robo\Plugin\Commands;
 
 use Robo\Exception\TaskException;
+use Robo\Result;
 use Robo\Tasks;
 use SbRoboTooling\Robo\Traits\UtilityTrait;
 
+/**
+ * Defines the commands in the drupal:* namespace.
+ */
 class DrupalCommands extends Tasks
 {
     use UtilityTrait;
@@ -24,7 +28,7 @@ class DrupalCommands extends Tasks
      *
      * @aliases dsi
      */
-    public function drupalInstall($opts = ['db-url' => '', 'no-interaction|n' => false])
+    public function drupalInstall($opts = ['db-url' => '', 'no-interaction|n' => false]): Result
     {
         $this->say('drupal:install');
         $task = $this->drush()
@@ -65,7 +69,7 @@ class DrupalCommands extends Tasks
      *
      * @aliases dic
      */
-    public function importConfig()
+    public function importConfig(): Result
     {
         $this->say('import:config');
         $this->cacheRebuild();
@@ -96,7 +100,7 @@ class DrupalCommands extends Tasks
      *
      * @aliases dudb
      */
-    public function updateDatabase()
+    public function updateDatabase(): Result
     {
         $this->say('drupal:update:db');
         $this->cacheRebuild();
@@ -119,7 +123,7 @@ class DrupalCommands extends Tasks
      *
      * @aliases dsdb
      */
-    public function syncDb($opts = ['skip-import|s' => false])
+    public function syncDb($opts = ['skip-import|s' => false]): Result
     {
         $this->say('sync:db');
         $remote_alias = '@' . $this->getConfigValue('project.machine_name') . '.' . $this->getConfigValue('sync.remote');
@@ -162,7 +166,7 @@ class DrupalCommands extends Tasks
      *
      * @aliases dsf
      */
-    public function syncFiles()
+    public function syncFiles(): Result
     {
         $this->say('sync:files');
         $remote_alias = '@' . $this->getConfigValue('project.machine_name') . '.' . $this->getConfigValue('sync.remote');

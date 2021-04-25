@@ -77,7 +77,8 @@ trait UtilityTrait
                 ->run();
             }
         } else {
-            $this->io()->caution('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
+            $this->io()->newLine();
+            $this->io()->note('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
         }
     }
 
