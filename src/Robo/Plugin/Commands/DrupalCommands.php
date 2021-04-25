@@ -27,6 +27,8 @@ class DrupalCommands extends Tasks
      * @command drupal:site:install
      *
      * @aliases dsi
+     *
+     * @return Robo\Result
      */
     public function drupalInstall($opts = ['db-url' => '', 'no-interaction|n' => false]): Result
     {
@@ -68,6 +70,8 @@ class DrupalCommands extends Tasks
      * @command drupal:import:config
      *
      * @aliases dic
+     *
+     * @return Robo\Result
      */
     public function importConfig(): Result
     {
@@ -99,6 +103,8 @@ class DrupalCommands extends Tasks
      * @command drupal:update:db
      *
      * @aliases dudb
+     *
+     * @return Robo\Result
      */
     public function updateDatabase(): Result
     {
@@ -122,6 +128,8 @@ class DrupalCommands extends Tasks
      * @command drupal:sync:db
      *
      * @aliases dsdb
+     *
+     * @return Robo\Result
      */
     public function syncDb($opts = ['skip-import|s' => false]): Result
     {
@@ -165,6 +173,8 @@ class DrupalCommands extends Tasks
      * @command drupal:sync:files
      *
      * @aliases dsf
+     *
+     * @return Robo\Result
      */
     public function syncFiles(): Result
     {

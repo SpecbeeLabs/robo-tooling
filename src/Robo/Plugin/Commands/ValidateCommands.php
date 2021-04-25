@@ -117,7 +117,7 @@ class ValidateCommands extends Tasks
      *
      * @command validate:phpcs
      *
-     * @aliases vphpcs
+     * @aliases phpcs
     */
     public function validatePhpCs(): Result
     {

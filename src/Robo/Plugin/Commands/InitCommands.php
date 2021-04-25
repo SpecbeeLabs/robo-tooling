@@ -17,6 +17,7 @@ class InitCommands extends Tasks
 
     public function __construct()
     {
+        $this->stopOnFail();
         if (!file_exists($this->getDocroot() . "/robo.yml")) {
             throw new TaskException(
                 $this,
