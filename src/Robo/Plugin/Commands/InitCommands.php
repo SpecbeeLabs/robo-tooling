@@ -133,7 +133,7 @@ class InitCommands extends Tasks
             $this->taskFilesystemStack()
             ->mkdir($drushPath)
             ->touch($drushPath . '/default.sites.yml')
-            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/assets/default.sites.yml", $drushPath . '/default.sites.yml', true)
+            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/config/default.sites.yml", $drushPath . '/default.sites.yml', true)
             ->run();
         }
 
@@ -221,7 +221,7 @@ class InitCommands extends Tasks
 
             $this->taskFilesystemStack()
             ->touch($landoFile)
-            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/assets/.lando.yml", $landoFile, true)
+            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/config/.lando.yml", $landoFile, true)
             ->run();
         }
 
@@ -264,7 +264,7 @@ class InitCommands extends Tasks
 
             $this->taskFilesystemStack()
             ->touch($grumphpFile)
-            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/assets/grumphp.yml", $grumphpFile, true)
+            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/config/grumphp.yml", $grumphpFile, true)
             ->run();
         }
         $task = $this->taskReplaceInFile($grumphpFile)
