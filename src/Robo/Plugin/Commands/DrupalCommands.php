@@ -51,11 +51,6 @@ class DrupalCommands extends Tasks
             $task->option('db-url', static::DB_URL, '=');
         }
 
-        // Check if config directory exists.
-        if (file_exists($this->getDocroot() . '/' . $this->getConfigValue('drupal.config.path') . '/core.extension.yml')) {
-            $task->option('existing-config');
-        }
-
         $result = $task->run();
         if (!$result->wasSuccessful()) {
             throw new TaskException($task, "Could not install Drupal.");

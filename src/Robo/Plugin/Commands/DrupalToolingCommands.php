@@ -69,9 +69,8 @@ class DrupalToolingCommands extends DrupalCommands
             $this->io()->title('Syncing public files from ' . $this->getConfigValue('sync.remote'));
             $this->syncFiles();
         } else {
-            $this->io()->title('Syncing database and files from ' . $this->getConfigValue('sync.remote'));
+            $this->io()->title('Syncing database from ' . $this->getConfigValue('sync.remote') . ' and running database updated.');
             $this->syncDb($opts);
-            $this->syncFiles();
         }
 
         $this->cacheRebuild();
