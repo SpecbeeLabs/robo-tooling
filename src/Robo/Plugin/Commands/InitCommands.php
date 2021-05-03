@@ -32,7 +32,7 @@ class InitCommands extends Tasks
      *
      * @command init:git
      */
-    public function initGit($opts = ['--no-interaction|n' => false]): Result
+    public function initGit(): Result
     {
         if (!file_exists($this->getDocroot() . "/.git")) {
             $this->io()->title("Initializing empty Git repository in " . $this->getDocroot());
@@ -58,24 +58,12 @@ class InitCommands extends Tasks
             ->checkout('develop')
             ->run();
 
-            $remote = $this->taskExec('git remote')->run()->getMessage();
-            if (empty($remote)) {
-                $confirm = $this->io()->confirm('Do you want to add the remote "orgin" Git remote URL ' . $this->getConfigValue('project.git.remote') . '?', true);
-                if (!$confirm) {
-                    return Result::cancelled();
-                }
-
-                $result = $this->taskExec("git remote")
-                ->arg('add')
-                ->arg('origin')
-                ->arg($this->getConfigValue('project.git.remote'))
-                ->run();
-            }
-
             // Throw exception is the command fails.
             if (!$result->wasSuccessful()) {
                 throw new TaskException($result, "Could not initialize Git repository.");
             }
+
+            return $result;
         } else {
             $this->say("Git is already initialized at " . $this->getDocroot() . ". Skipping...");
         }
