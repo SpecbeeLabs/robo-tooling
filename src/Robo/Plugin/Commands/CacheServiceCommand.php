@@ -10,7 +10,7 @@ use SbRoboTooling\Robo\Traits\UtilityTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Defines commands in the test:* namespace.
+ * Defines command to initialize cache service.
  */
 class CacheServiceCommand extends Tasks
 {
