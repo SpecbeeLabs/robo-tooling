@@ -32,7 +32,7 @@ class InitCommands extends Tasks
      *
      * @command init:git
      */
-    public function initGit(): Result
+    public function initGit($opts = ['--no-interaction|n' => false]): Result
     {
         if (!file_exists($this->getDocroot() . "/.git")) {
             $this->io()->title("Initializing empty Git repository in " . $this->getDocroot());

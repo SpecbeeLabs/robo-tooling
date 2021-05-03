@@ -19,7 +19,7 @@
         "dmore/chrome-mink-driver": "^2.7",
         "drupal/drupal-extension": "^4.1",
         "drush-ops/behat-drush-endpoint": "^9.4",
-        "drush/drush": "^8 || ^10",
+        "drush/drush": "^10",
         "symfony/phpunit-bridge": "^5.1",
         "webflo/drupal-finder": "^1.2"
     },
