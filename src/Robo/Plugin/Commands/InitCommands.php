@@ -86,7 +86,7 @@ class InitCommands extends Tasks
     /**
      * Copy default drush aliases file.
      */
-    public function copyDrushAliases(): Result
+    public function copyDrushAliases()
     {
         $this->say('copy:default-drush-alias');
         if (!$this->getConfigValue('project.machine_name')) {
@@ -102,15 +102,12 @@ class InitCommands extends Tasks
         // Skip if alias file is already generated.
         if (file_exists($aliasPath)) {
             $this->io()->newLine();
-            $this->io()->note('Drush alias file exists. Skipping...');
+            $this->yell('Drush alias file exists. Skipping...');
             $this->io()->newLine();
-            return $this->taskExecStack()
-            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
-            ->exec('echo Skipping...')
-            ->run();
+            return;
         }
 
-        // Check if default.sites.yml exisits (the file will exist if project is created using specbee/drupal-start)
+        // Check if default.sites.yml exisits.
         // Attempt to create an aliase file if does not exists.
         if (!file_exists($drushPath . "/default.site.yml")) {
             $confirm = $this->io()->confirm('Default Drush aliases file does not exist. Do you want to create one?', true);
@@ -155,36 +152,31 @@ class InitCommands extends Tasks
         ) {
             $this->io()->newLine();
             $this->io()->warning('Drush aliases were not properly configured. Please add the information about remote server and run the command again.');
-            return $this->taskExecStack()
-            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
-            ->exec('echo Skipping...')
-            ->run();
         }
         $task = $this->taskReplaceInFile($drushFile)
-        ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_DEV_HOST}')
-        ->to($this->getConfigValue('remote.dev.host'))
+        ->to($this->getConfigValue('remotes.dev.host'))
         ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_DEV_USER}')
-        ->to($this->getConfigValue('remote.dev.user'))
+        ->to($this->getConfigValue('remotes.dev.user'))
         ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_DEV_ROOT}')
-        ->to($this->getConfigValue('remote.dev.root'))
+        ->to($this->getConfigValue('remotes.dev.root'))
         ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_DEV_URI}')
-        ->to($this->getConfigValue('remote.dev.uri'))
+        ->to($this->getConfigValue('remotes.dev.uri'))
         ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_STAGE_HOST}')
-        ->to($this->getConfigValue('remote.stage.host'))
+        ->to($this->getConfigValue('remotes.stage.host'))
         ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_STAGE_USER}')
-        ->to($this->getConfigValue('remote.stage.user'))
+        ->to($this->getConfigValue('remotes.stage.user'))
         ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_STAGE_ROOT}')
-        ->to($this->getConfigValue('remote.stage.root'))
+        ->to($this->getConfigValue('remotes.stage.root'))
         ->taskReplaceInFile($drushFile)
         ->from('${REMOTE_STAGE_URI}')
-        ->to($this->getConfigValue('remote.stage.uri'))
+        ->to($this->getConfigValue('remotes.stage.uri'))
         ->run();
 
         if (!$task->wasSuccessful()) {
