@@ -37,9 +37,9 @@ class InitCommands extends Tasks
         if (!file_exists($this->getDocroot() . "/.git")) {
             $this->io()->title("Initializing empty Git repository in " . $this->getDocroot());
             $this->say('setup:git');
-            chdir($this->getDocroot());
             $result = $this->taskGitStack()
             ->stopOnFail()
+            ->dir($this->getDocroot())
             ->exec('git init')
             ->commit('Initial commit.', '--allow-empty')
             ->add('-A')
@@ -81,6 +81,7 @@ class InitCommands extends Tasks
         $this->confDrushAlias();
         $this->confLando();
         $this->confGrumphp();
+        $this->commitSetup();
     }
 
     /**
@@ -260,5 +261,22 @@ class InitCommands extends Tasks
         }
 
         return $task;
+    }
+
+    /**
+     * Commit the changes of init:project command.
+     */
+    public function commitChanges(): Result
+    {
+        $this->say('Committing the changes...');
+        return $this->taskGitStack()
+        ->stopOnFail()
+        ->dir($this->getDocroot())
+        ->add('-A')
+        ->commit($this->getConfigValue('project.prefix') . '-000: Initialized new project from Specbee starterkit.')
+        ->interactive(false)
+        ->printOutput(false)
+        ->printMetadata(false)
+        ->run();
     }
 }

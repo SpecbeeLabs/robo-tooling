@@ -2,12 +2,9 @@
 
 namespace SbRoboTooling\Robo\Plugin\Commands;
 
-use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
-use Robo\Result;
 use Robo\Tasks;
 use SbRoboTooling\Robo\Traits\UtilityTrait;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Defines command deploy code.

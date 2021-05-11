@@ -14,6 +14,7 @@ if (!InstallerKernel::installationAttempted() && extension_loaded('redis')) {
 
   //PhpRedis should be build in the application container.
   $settings['redis.connection']['interface'] = 'PhpRedis';
+
   // Check variables if present else fallback to default.
   $settings['redis.connection']['host'] = $_ENV['CACHE_HOST'] ?? 'cache';
   $settings['redis.connection']['port'] = $_ENV['CACHE_PORT'] ?? '6379';
