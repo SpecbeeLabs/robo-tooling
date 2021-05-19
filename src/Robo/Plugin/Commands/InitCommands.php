@@ -274,6 +274,9 @@ class InitCommands extends Tasks
     public function commitSetup(): Result
     {
         $this->say('Committing the changes...');
+        $this->say('Normalizing composer.json file...');
+        $this->taskExec('composer normalize')
+        ->run();
         return $this->taskGitStack()
         ->stopOnFail()
         ->dir($this->getDocroot())
