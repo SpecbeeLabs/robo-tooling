@@ -2,7 +2,6 @@
 
 namespace SbRoboTooling\Robo\Plugin\Commands;
 
-use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
@@ -74,20 +73,20 @@ class InitCommands extends Tasks
      *
      * @command init:project
      */
-    public function initProject(): void
+    public function initProject($opts = ['yes|y' => false]): void
     {
         $this->io()->title("Initializing and configuring project tool at " . $this->getDocroot());
-        $this->copyDrushAliases();
+        $this->copyDrushAliases($opts);
         $this->confDrushAlias();
-        $this->confLando();
-        $this->confGrumphp();
+        $this->confLando($opts);
+        $this->confGrumphp($opts);
         $this->commitSetup();
     }
 
     /**
      * Copy default drush aliases file.
      */
-    public function copyDrushAliases()
+    public function copyDrushAliases($opts = ['yes|y' => false])
     {
         $this->say('copy:default-drush-alias');
         if (!$this->getConfigValue('project.machine_name')) {
@@ -111,9 +110,11 @@ class InitCommands extends Tasks
         // Check if default.sites.yml exisits.
         // Attempt to create an aliase file if does not exists.
         if (!file_exists($drushPath . "/default.site.yml")) {
-            $confirm = $this->io()->confirm('Default Drush aliases file does not exist. Do you want to create one?', true);
-            if (!$confirm) {
-                return Result::cancelled();
+            if (!$opts['yes']) {
+                $confirm = $this->io()->confirm('Default Drush aliases file does not exist. Do you want to create one?', true);
+                if (!$confirm) {
+                    return Result::cancelled();
+                }
             }
 
             $this->taskFilesystemStack()
@@ -190,14 +191,16 @@ class InitCommands extends Tasks
     /**
      * Setup lando.yml for local environment.
      */
-    public function confLando(): Result
+    public function confLando($opts = ['yes|y' => false]): Result
     {
         $this->say('setup:lando');
         $landoFile = $this->getDocroot() . '/.lando.yml';
         if (!file_exists($landoFile)) {
-            $confirm = $this->io()->confirm('Lando file does not exist. Do you want to initialize lando for local development?', true);
-            if (!$confirm) {
-                return Result::cancelled();
+            if (!$opts['yes']) {
+                $confirm = $this->io()->confirm('Lando file does not exist. Do you want to initialize lando for local development?', true);
+                if (!$confirm) {
+                    return Result::cancelled();
+                }
             }
 
             $this->taskFilesystemStack()
@@ -227,14 +230,16 @@ class InitCommands extends Tasks
     /**
      * Setup Grumphp file.
      */
-    public function confGrumphp(): Result
+    public function confGrumphp($opts = ['yes|y' => false]): Result
     {
         $this->say('setup:grumphp');
         $grumphpFile = $this->getDocroot() . '/grumphp.yml';
         if (!file_exists($grumphpFile)) {
-            $confirm = $this->io()->confirm('Grumphp configuration not found. Do you want to initialize Grumphp?', true);
-            if (!$confirm) {
-                return Result::cancelled();
+            if (!$opts['yes']) {
+                $confirm = $this->io()->confirm('Grumphp configuration not found. Do you want to initialize Grumphp?', true);
+                if (!$confirm) {
+                    return Result::cancelled();
+                }
             }
 
             $this->taskComposerRequire()
@@ -266,7 +271,7 @@ class InitCommands extends Tasks
     /**
      * Commit the changes of init:project command.
      */
-    public function commitChanges(): Result
+    public function commitSetup(): Result
     {
         $this->say('Committing the changes...');
         return $this->taskGitStack()
