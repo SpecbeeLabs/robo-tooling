@@ -167,7 +167,9 @@ class ValidateCommands extends Tasks
             ->run();
         }
 
-        return $this->taskExec($this->getConfigValue('drupal.theme.lint'))
+        return $this->taskExecStack()
+            ->exec($this->getConfigValue('drupal.theme.build'))
+            ->exec($this->getConfigValue('drupal.theme.lint'))
             ->dir($this->getConfigValue('drupal.theme.path'))
             ->run();
     }
