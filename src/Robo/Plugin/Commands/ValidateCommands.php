@@ -123,6 +123,17 @@ class ValidateCommands extends Tasks
     {
         $tasks = [];
         $this->say("Validating Drupal coding standards...");
+        foreach ($this->getCustomCodePaths() as $path) {
+            if (!file_exists($path)) {
+                $this->io()->newLine();
+                $this->io()->warning('Path ' . $path . ' not found. PHPCS will likely fail. Skipping...');
+                $this->io()->newLine();
+                return $this->taskExecStack()
+                ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+                ->exec('echo Skipping...')
+                ->run();
+            }
+        }
         $tasks[] = $this->taskExecStack()
         ->exec('vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer')
         ->run();
