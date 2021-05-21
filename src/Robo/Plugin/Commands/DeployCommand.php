@@ -41,6 +41,16 @@ class DeployCommand extends Tasks
         ->args('core:status')
         ->run();
 
+        // Set the system UUID for importing configurations.
+        $this->cacheRebuild();
+        $this->drush()
+        ->arg('config:set')
+        ->arg('system.site')
+        ->arg('uuid')
+        ->arg($this->getExportedSiteUuid())
+        ->arg('--no-interaction')
+        ->run();
+
         // Put the site in maintenance mode in case of a Production deployment.
         if ($opts['production']) {
             $this->io()->note('Putting the site in manintenance mode');
