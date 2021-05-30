@@ -49,15 +49,19 @@ All the commands can be accessed under lando namespace. `lando robo <command>`
 
 | Task                                            | Command                                         |
 |-------------------------------------------------|-----------------------------------------------|
-| Setup the site from scratch | ```robo setup``` |
-| Running database updates and importing configurations| ```robo drupal:update```|
-| Sync database and files from remote environment defines under _remote_ in `robo.yml` | ```robo sync:all```|
-| Sync database from remote environment defines under _remote_ in `robo.yml` | ```robo sync:db```|
-| Sync files from remote environment defines under _remote_ in `robo.yml` | ```robo sync:files```|
-| Validate files - Check composer validation, Run PHPCS against modules and themes, Check SASS Lint in the theme | ```robo validate```|
-| Initialize and setup Redis caching | ```robo init:service:cache```|
-| Running Behat test | ```robo test:behat```|
-| Running PHPUnit test | ```robo test:phpunit```|
-| Run deployment commands | ```robo test:phpunit```|
+| Setup the site from scratch | ```setup``` |
+| Running database updates and importing configurations| ``` drupal:update```|
+| Sync database and files from remote environment defines under _remote_ in `robo.yml` | ```sync:all```|
+| Sync database from remote environment defines under _remote_ in `robo.yml` | ```sync:db```|
+| Sync files from remote environment defines under _remote_ in `robo.yml` | ```sync:files```|
+| Validate files - Check composer validation, run PHPCS against modules and themes code path set in `robo.yml` under _phpcs.code_paths_ and run SASS Lint in the theme | ```validate```|
+| Validate files - Check composer validation| ```validate:composer```|
+| Validate files - Run PHPCS against modules and themes code path set in `robo.yml` under _phpcs.code_paths_ | ```validate:phpcs```|
+| Validate files - Run SASS Lint in the theme | ```validate:theme```|
+| Initialize and setup Redis caching | ```init:service:cache```|
+| Running all tests | ```test```|
+| Running Behat test | ```test:behat```|
+| Running PHPUnit test | ```test:phpunit```|
+| Run remote deployment procedures | ```test:deploy```|
 
 

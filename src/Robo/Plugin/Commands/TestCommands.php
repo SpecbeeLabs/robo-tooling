@@ -70,4 +70,16 @@ class TestCommands extends Tasks
         ->arg($this->getConfigValue('tests.phpunit.dir'))
         ->run();
     }
+
+    /**
+     * Run test, Behat and PHPUnit.
+     *
+     * @command test
+     */
+    public function test(): void
+    {
+        $this->say("Running all tests...");
+        $this->testBehat();
+        $this->testPhpUnit();
+    }
 }
