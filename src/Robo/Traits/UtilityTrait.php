@@ -62,7 +62,10 @@ trait UtilityTrait
         chdir($this->getDocroot());
         return $this->taskComposerInstall()->ansi()->noInteraction()->run();
     }
-
+    
+    /**
+     * Build the frontend assets.
+     */
     public function buildTheme()
     {
         if (file_exists($this->getConfigValue('drupal.theme.path'))) {
