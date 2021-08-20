@@ -2,6 +2,7 @@
 
 namespace SbRoboTooling\Robo\Plugin\Commands;
 
+use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
@@ -67,6 +68,10 @@ class InitCommands extends Tasks
             return $result;
         } else {
             $this->say("Git is already initialized at " . $this->getDocroot() . ". Skipping...");
+            return $this->taskExecStack()
+                ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+                ->exec('echo Skipping...')
+                ->run();
         }
     }
 
