@@ -14,6 +14,8 @@ class InitCommands extends Tasks
 {
     use UtilityTrait;
 
+    private const CONFIG_PATH = '/vendor/specbee/robo-tooling/config/';
+
     public function __construct()
     {
         $this->stopOnFail();
@@ -286,5 +288,59 @@ class InitCommands extends Tasks
         ->printOutput(false)
         ->printMetadata(false)
         ->run();
+    }
+
+    /**
+     * Initialize Behat & PHPUnit tests.
+     *
+     * @command init:project:tests
+     */
+    public function initTests()
+    {
+        $this->io()->title("Settings up Behat!");
+        $this->say('Installing the Behat packages...');
+        $this->taskComposerRequire()
+            ->dependency('behat/behat', '^3.8')
+            ->dependency('behat/mink-goutte-driver', '^1.2')
+            ->dependency('behat/mink-selenium2-driver', '^1.4')
+            ->dependency('bex/behat-screenshot', '^2.1')
+            ->dependency('dmore/behat-chrome-extension', '^1.3')
+            ->dependency('dmore/chrome-mink-driver', '^2.7')
+            ->dependency('drupal/drupal-extension', '^4.1')
+            ->dev(true)
+            ->ansi()
+            ->noInteraction()
+            ->run();
+
+        $behatDir = $this->getConfigValue('tests.behat.dir');
+        $behatConfig = $this->getConfigValue('tests.behat.config');
+        $this->io()->newLine();
+        $this->say('Initializing Behat at ' . $behatDir);
+        $this->taskBehat()
+            ->dir($this->getDocroot() . '/' . $behatDir)
+            ->option('init')
+            ->run();
+
+        $this->say('Configuring Behat at ' . $behatDir);
+        $this->taskFilesystemStack()
+            ->touch($behatConfig)
+            ->copy($this->getDocroot() . self::CONFIG_PATH . "behat.yml", $behatConfig, true)
+            ->run();
+
+        $this->io()->title("Settings up PHPUnit!");
+        $this->say('Installing the PHPUnit packages...');
+        $this->taskComposerRequire()
+            ->dependency('symfony/phpunit-bridge', '^4.1')
+            ->dev(true)
+            ->ansi()
+            ->noInteraction()
+            ->run();
+        $phpUnitDir = $this->getConfigValue('tests.phpunit.dir');
+        $phpUnitConfig = $this->getConfigValue('tests.phpunit.config');
+        $this->say('Configuring PHPUnit at ' . $phpUnitDir);
+        $this->taskFilesystemStack()
+            ->touch($phpUnitConfig)
+            ->copy($this->getDocroot() . self::CONFIG_PATH . "phpunit.xml", $phpUnitConfig, true)
+            ->run();
     }
 }
