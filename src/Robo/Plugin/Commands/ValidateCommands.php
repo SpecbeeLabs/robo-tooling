@@ -157,6 +157,20 @@ class ValidateCommands extends Tasks
      */
     public function validateTheme(): Result
     {
+        $this->say("Validating frontend assets...");
+
+        // Return early if the set theme path is not valid.
+        if (!file_exists($this->getConfigValue('drupal.theme.path'))) {
+            $this->io()->newLine();
+            $this->io()->warning('Path ' . $this->getConfigValue('drupal.theme.path') . ' not found. Skipping...');
+            $this->io()->newLine();
+            return $this->taskExecStack()
+            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+            ->exec('echo Skipping...')
+            ->run();
+        }
+
+        // Return early if there is no validation command.
         if (empty($this->getConfigValue('drupal.theme.lint'))) {
             $this->io()->newLine();
             $this->io()->note('No theme lint command found. Skipping...');

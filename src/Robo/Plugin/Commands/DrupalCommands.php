@@ -39,7 +39,8 @@ class DrupalCommands extends Tasks
         ->option('site-name', $this->getConfigValue('project.human_name'), '=')
         ->option('site-mail', $this->getConfigValue('drupal.account.mail'), '=')
         ->option('account-name', $this->getConfigValue('drupal.account.name'), '=')
-        ->option('account-mail', $this->getConfigValue('drupal.account.mail'), '=');
+        ->option('account-mail', $this->getConfigValue('drupal.account.mail'), '=')
+        ->option('ansi');
 
         if ($opts['no-interaction']) {
             $task->arg('--no-interaction');
@@ -77,12 +78,14 @@ class DrupalCommands extends Tasks
         ->arg('system.site')
         ->arg('uuid')
         ->arg($this->getExportedSiteUuid())
-        ->arg('--no-interaction')
+        ->option('no-interaction')
+        ->option('ansi')
         ->run();
 
         $task = $this->drush()
         ->arg('config:import')
-        ->arg('--no-interaction')
+        ->option('ansi')
+        ->option('no-interaction')
         ->run();
 
         if (!$task->wasSuccessful()) {
@@ -107,8 +110,8 @@ class DrupalCommands extends Tasks
         $this->cacheRebuild();
         $task = $this->drush()
         ->arg('updatedb')
-        ->arg('--no-interaction')
-        ->arg('--ansi')
+        ->option('ansi')
+        ->option('no-interaction')
         ->run();
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Failed to execute database updates!");
@@ -128,8 +131,10 @@ class DrupalCommands extends Tasks
      */
     public function syncDb($opts = ['skip-import|s' => false]): Result
     {
+        $machineName = $this->getConfigValue('project.machine_name');
+        $remote = $this->getConfigValue('sync.remote');
         $this->say('sync:db');
-        $remote_alias = '@' . $this->getConfigValue('project.machine_name') . '.' . $this->getConfigValue('sync.remote');
+        $remote_alias = '@' . $machineName . '.' . $remote;
         $local_alias = '@self';
         $collection = $this->collectionBuilder();
         $collection->addTask(
@@ -141,12 +146,14 @@ class DrupalCommands extends Tasks
             ->option('--target-dump', sys_get_temp_dir() . '/tmp.target.sql.gz')
             ->option('structure-tables-key', 'lightweight')
             ->option('create-db')
+            ->option('ansi')
         );
         if ($this->getConfigValue('sync.sanitize') === true) {
             $collection->addTask(
                 $this->drush()
-                ->args('--no-interaction')
                 ->args('sql-sanitize')
+                ->option('no-interaction')
+                ->option('ansi')
             );
         }
         $result = $collection->run();
@@ -173,14 +180,17 @@ class DrupalCommands extends Tasks
      */
     public function syncFiles(): Result
     {
+        $machineName = $this->getConfigValue('project.machine_name');
+        $remote = $this->getConfigValue('sync.remote');
         $this->say('sync:files');
-        $remote_alias = '@' . $this->getConfigValue('project.machine_name') . '.' . $this->getConfigValue('sync.remote');
+        $remote_alias = '@' . $machineName . '.' . $remote;
         $local_alias = '@self';
         $task = $this->drush()
         ->args('core-rsync')
-        ->args('--no-interaction')
         ->arg($remote_alias . ':%files')
         ->arg($local_alias . ':%files')
+        ->option('ansi')
+        ->option('no-interaction')
         ->run();
 
         if (!$task->wasSuccessful()) {

@@ -23,6 +23,7 @@ class CacheServiceCommand extends Tasks
      */
     public function initServiceCache()
     {
+        $docroot = $this->getDocroot();
         $this->say('init:recipe-redis');
 
         $task = $this->taskExec('composer show -- | grep "redis"')
@@ -43,7 +44,8 @@ class CacheServiceCommand extends Tasks
         $this->drush()
         ->args('pm-enable')
         ->args('redis')
-        ->arg('--no-interaction')
+        ->option('ansi')
+        ->option('no-interaction')
         ->run();
 
         $this->say('Checking if Redis is already configured');
@@ -53,7 +55,8 @@ class CacheServiceCommand extends Tasks
         if ($task->wasSuccessful()) {
             $this->io()->note('Redis is already installed and configured. Skipping...');
         } else {
-            $task = $this->taskWriteToFile($this->getDocroot() . '/' . $this->getConfigValue('drupal.webroot') . '/sites/default/settings.php')
+            $settings = '/sites/default/settings.php';
+            $task = $this->taskWriteToFile($docroot . '/' . $this->getConfigValue('drupal.webroot') . $settings)
             ->append()
             ->line('# Redis Configuration.')
             ->line('$conf[\'redis_client_host\'] = \'cache\';')
@@ -64,7 +67,7 @@ class CacheServiceCommand extends Tasks
             }
         }
 
-        $landoFileConfig = Yaml::parse(file_get_contents($this->getDocroot() . '/.lando.yml', 128));
+        $landoFileConfig = Yaml::parse(file_get_contents($docroot . '/.lando.yml', 128));
         $this->say('Checking if there is cache service is setup.');
         if (!array_key_exists('cache', $landoFileConfig['services'])) {
             $confirm = $this->io()->confirm('Do you want to update Lando to add the `cache` service for Redis?', true);
@@ -80,7 +83,7 @@ class CacheServiceCommand extends Tasks
             'service' => 'cache',
             ];
 
-            file_put_contents($this->getDocroot() . '/.lando.yml', Yaml::dump($landoFileConfig, 5, 2));
+            file_put_contents($docroot . '/.lando.yml', Yaml::dump($landoFileConfig, 5, 2));
             $this->io()->note('Lando configurations are updated with cache service.');
             $this->io()->warning('Do a `lando rebuild` for the change to take effect.');
         } else {

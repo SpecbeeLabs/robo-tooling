@@ -39,6 +39,7 @@ class DeployCommand extends Tasks
         // Check site status to debug in case of failed deployment.
         $this->drush()
         ->args('core:status')
+        ->option('ansi')
         ->run();
 
         // Set the system UUID for importing configurations.
@@ -48,7 +49,8 @@ class DeployCommand extends Tasks
         ->arg('system.site')
         ->arg('uuid')
         ->arg($this->getExportedSiteUuid())
-        ->arg('--no-interaction')
+        ->option('ansi')
+        ->option('no-interaction')
         ->run();
 
         // Put the site in maintenance mode in case of a Production deployment.
@@ -58,6 +60,7 @@ class DeployCommand extends Tasks
             ->args('state:set')
             ->args('system.maintenance_mode')
             ->args('1')
+            ->option('ansi')
             ->run();
             $this->io()->newLine();
             $this->io()->warning("Site is now offline");
@@ -75,6 +78,7 @@ class DeployCommand extends Tasks
         ->args('deploy')
         ->option('-v')
         ->option('-y')
+        ->option('ansi')
         ->run();
 
         if (!$task->wasSuccessful()) {
@@ -84,6 +88,7 @@ class DeployCommand extends Tasks
         # Run cron.
         $this->drush()
         ->args('core-cron')
+        ->option('ansi')
         ->run();
 
         # Clear the cache.
@@ -96,6 +101,7 @@ class DeployCommand extends Tasks
             ->args('state:set')
             ->args('system.maintenance_mode')
             ->args('0')
+            ->option('ansi')
             ->run();
         }
         $this->io()->newLine();

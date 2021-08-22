@@ -62,14 +62,15 @@ class DrupalToolingCommands extends DrupalCommands
      */
     public function sync($opts = ['skip-import|s' => false, 'db' => false, 'files' => false]): void
     {
+        $remote = $this->getConfigValue('sync.remote');
         if ($opts['db']) {
-            $this->io()->title('Syncing database ' . $this->getConfigValue('sync.remote'));
+            $this->io()->title('Syncing database ' . $remote);
             $this->syncDb($opts);
         } elseif ($opts['files']) {
-            $this->io()->title('Syncing public files from ' . $this->getConfigValue('sync.remote'));
+            $this->io()->title('Syncing public files from ' . $remote);
             $this->syncFiles();
         } else {
-            $this->io()->title('Syncing database from ' . $this->getConfigValue('sync.remote') . ' and running database updated.');
+            $this->io()->title('Syncing database from ' . $remote . ' and running database updated.');
             $this->syncDb($opts);
         }
 
