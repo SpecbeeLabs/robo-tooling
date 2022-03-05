@@ -1,8 +1,8 @@
 <?php
 
-namespace SbRoboTooling\Robo\Plugin\Commands;
+namespace Specbee\DevSuite\Robo\Plugin\Commands;
 
-use SbRoboTooling\Robo\Traits\UtilityTrait;
+use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
  * Provides tooling commands for drupal:* namespace.

@@ -1,11 +1,11 @@
 <?php
 
-namespace SbRoboTooling\Robo\Plugin\Commands;
+namespace Specbee\DevSuite\Robo\Plugin\Commands;
 
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
-use SbRoboTooling\Robo\Traits\UtilityTrait;
+use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
  * Defines commands in the test:* namespace.

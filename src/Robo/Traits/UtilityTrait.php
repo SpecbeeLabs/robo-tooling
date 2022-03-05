@@ -1,6 +1,6 @@
 <?php
 
-namespace SbRoboTooling\Robo\Traits;
+namespace Specbee\DevSuite\Robo\Traits;
 
 use DrupalFinder\DrupalFinder;
 use Robo\Exception\TaskException;
@@ -62,7 +62,7 @@ trait UtilityTrait
         chdir($this->getDocroot());
         return $this->taskComposerInstall()->ansi()->noInteraction()->run();
     }
-    
+
     /**
      * Build the frontend assets.
      */
