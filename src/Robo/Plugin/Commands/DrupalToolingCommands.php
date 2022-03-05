@@ -36,16 +36,15 @@ class DrupalToolingCommands extends DrupalCommands
 
         // Don't try to import configurations for new installation.
         if (file_exists($this->getDocroot() . '/' . $this->getConfigValue('drupal.config.path') . '/core.extension.yml')) {
-            echo "Importing config.";
             $this->importConfig();
             $this->cacheRebuild();
         }
     }
 
     /**
-     * Update & refresh Drupal database udpates and import pending config.
+     * Update & refresh Drupal database updates and import pending config.
      *
-     * @command drupal:udpate
+     * @command drupal:update
      *
      * @aliases du
      */
@@ -58,7 +57,7 @@ class DrupalToolingCommands extends DrupalCommands
     }
 
     /**
-     * Sync database and files from remote envrionment.
+     * Sync database and files from remote environments.
      *
      * @command sync
      */

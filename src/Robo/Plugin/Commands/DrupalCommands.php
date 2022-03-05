@@ -90,6 +90,18 @@ class DrupalCommands extends Tasks
         ->option('no-interaction')
         ->run();
 
+        // Import the latest configuration again. This includes the latest
+        // configuration_split configuration. Importing this twice ensures that
+        // the latter command enables and disables modules based upon the most up
+        // to date configuration. Additional information and discussion can be
+        // found here:
+        // https://github.com/drush-ops/drush/issues/2449#issuecomment-708655673
+        $task = $task = $this->drush()
+        ->arg('config:import')
+        ->option('ansi')
+        ->option('no-interaction')
+        ->run();
+
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Failed to import configuration updates!");
         }

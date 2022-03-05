@@ -84,7 +84,7 @@ trait UtilityTrait
                 ->run();
             }
         } else {
-            $this->info('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
+            $this->warning('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
         }
     }
 
