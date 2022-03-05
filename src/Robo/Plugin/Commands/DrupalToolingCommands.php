@@ -2,6 +2,7 @@
 
 namespace Specbee\DevSuite\Robo\Plugin\Commands;
 
+use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
@@ -10,6 +11,7 @@ use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 class DrupalToolingCommands extends DrupalCommands
 {
     use UtilityTrait;
+    use IO;
 
     /**
      * RoboFile constructor.
@@ -26,9 +28,9 @@ class DrupalToolingCommands extends DrupalCommands
      */
     public function setup($opts = ['db-url' => '', 'no-interaction|n' => false]): void
     {
-        $this->io()->title('Setting up a new Drupal site - ' . $this->getConfigValue('project.human_name'));
+        $this->title('Setting up a new Drupal site - ' . $this->getConfigValue('project.human_name'));
         $this->installComposerDependencies();
-        $this->say('Building theme..');
+        $this->info('Building theme..');
         $this->buildTheme();
         $this->drupalInstall($opts);
 
@@ -49,7 +51,7 @@ class DrupalToolingCommands extends DrupalCommands
      */
     public function drupalUpdate(): void
     {
-        $this->io()->title('Updating & refreshing Drupal database');
+        $this->title('Updating & refreshing Drupal database');
         $this->installComposerDependencies();
         $this->updateDatabase();
         $this->importConfig();
@@ -64,13 +66,13 @@ class DrupalToolingCommands extends DrupalCommands
     {
         $remote = $this->getConfigValue('sync.remote');
         if ($opts['db']) {
-            $this->io()->title('Syncing database ' . $remote);
+            $this->title('Syncing database ' . $remote);
             $this->syncDb($opts);
         } elseif ($opts['files']) {
-            $this->io()->title('Syncing public files from ' . $remote);
+            $this->title('Syncing public files from ' . $remote);
             $this->syncFiles();
         } else {
-            $this->io()->title('Syncing database from ' . $remote . ' and running database updated.');
+            $this->title('Syncing database from ' . $remote . ' and running database updated.');
             $this->syncDb($opts);
         }
 

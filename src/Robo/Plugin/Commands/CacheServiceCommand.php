@@ -6,6 +6,7 @@ use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
+use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 use Symfony\Component\Yaml\Yaml;
 
@@ -15,6 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 class CacheServiceCommand extends Tasks
 {
     use UtilityTrait;
+    use IO;
 
     /**
      * Setup redis.
@@ -24,20 +26,20 @@ class CacheServiceCommand extends Tasks
     public function initServiceCache()
     {
         $docroot = $this->getDocroot();
-        $this->say('init:recipe-redis');
+        $this->say('Setting up redis.');
 
         $task = $this->taskExec('composer show -- | grep "redis"')
         ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
         ->run();
         if (!$task->wasSuccessful()) {
-            $this->io()->section('Adding the Drupal Redis module via composer.');
+            $this->title('Adding the Drupal Redis module via composer.');
             $this->taskComposerRequire()
             ->dependency('drupal/redis')
             ->ansi()
             ->noInteraction()
             ->run();
         } else {
-            $this->io()->note("Redis is already added to composer.json. Skipping..");
+            $this->info("Redis is already added to composer.json. Skipping..", true);
         }
 
         $this->say('Enabling Redis module..');
@@ -53,7 +55,7 @@ class CacheServiceCommand extends Tasks
         ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
         ->run();
         if ($task->wasSuccessful()) {
-            $this->io()->note('Redis is already installed and configured. Skipping...');
+            $this->info('Redis is already installed and configured.', true);
         } else {
             $settings = '/sites/default/settings.php';
             $task = $this->taskWriteToFile($docroot . '/' . $this->getConfigValue('drupal.webroot') . $settings)
@@ -70,7 +72,7 @@ class CacheServiceCommand extends Tasks
         $landoFileConfig = Yaml::parse(file_get_contents($docroot . '/.lando.yml', 128));
         $this->say('Checking if there is cache service is setup.');
         if (!array_key_exists('cache', $landoFileConfig['services'])) {
-            $confirm = $this->io()->confirm('Do you want to update Lando to add the `cache` service for Redis?', true);
+            $confirm = $this->confirm('Do you want to update Lando to add the `cache` service for Redis?', true);
             if (!$confirm) {
                 return Result::cancelled();
             }
@@ -84,10 +86,10 @@ class CacheServiceCommand extends Tasks
             ];
 
             file_put_contents($docroot . '/.lando.yml', Yaml::dump($landoFileConfig, 5, 2));
-            $this->io()->note('Lando configurations are updated with cache service.');
-            $this->io()->warning('Do a `lando rebuild` for the change to take effect.');
+            $this->success('Lando configurations are updated with cache service.');
+            $this->info('Do a `lando rebuild` for the change to take effect.');
         } else {
-            $this->io()->note('Cache service is already added to Lando configuration. Skipping..');
+            $this->info('Cache service is already added to Lando configuration.', true);
         }
     }
 }

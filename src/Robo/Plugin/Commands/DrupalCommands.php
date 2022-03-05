@@ -5,6 +5,7 @@ namespace Specbee\DevSuite\Robo\Plugin\Commands;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
+use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
@@ -13,6 +14,7 @@ use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 class DrupalCommands extends Tasks
 {
     use UtilityTrait;
+    use IO;
 
     /**
      * The local database URL.
@@ -65,13 +67,13 @@ class DrupalCommands extends Tasks
      *
      * @command drupal:import:config
      *
-     * @aliases dic
+     * @aliases dci, dic
      *
      * @return Robo\Result
      */
     public function importConfig(): Result
     {
-        $this->say('import:config');
+        $this->say('drupal:import:config');
         $this->cacheRebuild();
         $this->drush()
         ->arg('config:set')
@@ -100,7 +102,7 @@ class DrupalCommands extends Tasks
      *
      * @command drupal:update:db
      *
-     * @aliases dudb
+     * @aliases dupdb
      *
      * @return Robo\Result
      */
@@ -133,7 +135,7 @@ class DrupalCommands extends Tasks
     {
         $machineName = $this->getConfigValue('project.machine_name');
         $remote = $this->getConfigValue('sync.remote');
-        $this->say('sync:db');
+        $this->say('drupal:sync:db');
         $remote_alias = '@' . $machineName . '.' . $remote;
         $local_alias = '@self';
         $collection = $this->collectionBuilder();
@@ -182,7 +184,7 @@ class DrupalCommands extends Tasks
     {
         $machineName = $this->getConfigValue('project.machine_name');
         $remote = $this->getConfigValue('sync.remote');
-        $this->say('sync:files');
+        $this->say('drupal:sync:files');
         $remote_alias = '@' . $machineName . '.' . $remote;
         $local_alias = '@self';
         $task = $this->drush()

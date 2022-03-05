@@ -6,6 +6,7 @@ use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
+use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
@@ -14,6 +15,7 @@ use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 class ValidateCommands extends Tasks
 {
     use UtilityTrait;
+    use IO;
 
     /**
      * Array containing the file extensions PHPCS should check.
@@ -94,7 +96,7 @@ class ValidateCommands extends Tasks
         ->exec('composer validate --no-check-all --ansi')
         ->run();
         if (!$task->wasSuccessful()) {
-            $this->io()->error('The composer.lock is invalid. Mostly a `composer update --lock` will resolve the issue. Otherwise, run `composer update` to fix the problem.');
+            $this->error('The composer.lock is invalid. Mostly a `composer update --lock` will resolve the issue. Otherwise, run `composer update` to fix the problem.');
             throw new TaskException($task, "The composer.lock file is invalid!");
         }
 
@@ -104,7 +106,7 @@ class ValidateCommands extends Tasks
         ->run();
 
         if (!$task->wasSuccessful()) {
-            $this->io()->error($task->getMessage());
+            $this->error($task->getMessage());
             throw new TaskException($task, "The composer.json file is not normalized!");
         }
 
@@ -124,9 +126,7 @@ class ValidateCommands extends Tasks
         $this->say("Validating Drupal coding standards...");
         foreach ($this->getCustomCodePaths() as $path) {
             if (!file_exists($path)) {
-                $this->io()->newLine();
-                $this->io()->warning('Path ' . $path . ' not found. PHPCS will likely fail. Skipping...');
-                $this->io()->newLine();
+                $this->warning('Path ' . $path . ' not found. PHPCS will likely fail. Skipping...');
                 return $this->taskExecStack()
                 ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
                 ->exec('echo Skipping...')
@@ -160,9 +160,7 @@ class ValidateCommands extends Tasks
 
         // Return early if the set theme path is not valid.
         if (!file_exists($this->getConfigValue('drupal.theme.path'))) {
-            $this->io()->newLine();
-            $this->io()->warning('Path ' . $this->getConfigValue('drupal.theme.path') . ' not found. Skipping...');
-            $this->io()->newLine();
+            $this->info('Path ' . $this->getConfigValue('drupal.theme.path') . ' not found.', true);
             return $this->taskExecStack()
             ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
             ->exec('echo Skipping...')
@@ -171,9 +169,7 @@ class ValidateCommands extends Tasks
 
         // Return early if there is no validation command.
         if (empty($this->getConfigValue('drupal.theme.lint'))) {
-            $this->io()->newLine();
-            $this->io()->note('No theme lint command found. Skipping...');
-            $this->io()->newLine();
+            $this->info('No theme lint command found.', true);
             return $this->taskExecStack()
             ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
             ->exec('echo Skipping...')
@@ -194,7 +190,7 @@ class ValidateCommands extends Tasks
      */
     public function validate(): void
     {
-        $this->io()->title('Validating fileset...');
+        $this->title('Validating fileset...');
         $this->validateComposer();
         $this->validatePhpCs();
         $this->validateTheme();

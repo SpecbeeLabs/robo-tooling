@@ -2,10 +2,12 @@
 
 namespace Specbee\DevSuite\Robo\Plugin\Commands;
 
+use ReflectionClass;
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
+use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
@@ -14,6 +16,7 @@ use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 class InitCommands extends Tasks
 {
     use UtilityTrait;
+    use IO;
 
     private const CONFIG_PATH = '/vendor/specbee/robo-tooling/config/';
 
@@ -37,8 +40,7 @@ class InitCommands extends Tasks
     public function initGit(): Result
     {
         if (!file_exists($this->getDocroot() . "/.git")) {
-            $this->io()->title("Initializing empty Git repository in " . $this->getDocroot());
-            $this->say('setup:git');
+            $this->title("Initializing empty Git repository in " . $this->getDocroot());
             $result = $this->taskGitStack()
             ->stopOnFail()
             ->dir($this->getDocroot())
@@ -52,8 +54,7 @@ class InitCommands extends Tasks
             ->run();
 
             // Switch to develop branch once master is setup.
-            $this->io()->newLine();
-            $this->io()->section("Switching to develop branch.");
+            $this->title("Switching to develop branch.");
             $result = $this->taskGitStack()
             ->stopOnFail()
             ->exec('git branch develop')
@@ -67,7 +68,7 @@ class InitCommands extends Tasks
 
             return $result;
         } else {
-            $this->say("Git is already initialized at " . $this->getDocroot() . ". Skipping...");
+            $this->info("Git is already initialized at " . $this->getDocroot(), true);
             return $this->taskExecStack()
                 ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
                 ->exec('echo Skipping...')
@@ -82,7 +83,7 @@ class InitCommands extends Tasks
      */
     public function initProject($opts = ['yes|y' => false]): void
     {
-        $this->io()->title("Initializing and configuring project tool at " . $this->getDocroot());
+        $this->title("Initializing and configuring project tool at " . $this->getDocroot());
         $this->copyDrushAliases($opts);
         $this->confDrushAlias();
         $this->confLando($opts);
@@ -95,7 +96,7 @@ class InitCommands extends Tasks
      */
     public function copyDrushAliases($opts = ['yes|y' => false])
     {
-        $this->say('copy:default-drush-alias');
+        $this->say('Copy default drush aliases file');
         if (!$this->getConfigValue('project.machine_name')) {
             throw new TaskException(
                 $this,
@@ -108,9 +109,7 @@ class InitCommands extends Tasks
 
         // Skip if alias file is already generated.
         if (file_exists($aliasPath)) {
-            $this->io()->newLine();
-            $this->yell('Drush alias file exists. Skipping...');
-            $this->io()->newLine();
+            $this->info('Drush alias file exists.', true);
             return;
         }
 
@@ -118,7 +117,7 @@ class InitCommands extends Tasks
         // Attempt to create an aliase file if does not exists.
         if (!file_exists($drushPath . "/default.site.yml")) {
             if (!$opts['yes']) {
-                $confirm = $this->io()->confirm('Default Drush aliases file does not exist. Do you want to create one?', true);
+                $confirm = $this->confirm('Default Drush aliases file does not exist. Do you want to create one?', true);
                 if (!$confirm) {
                     return Result::cancelled();
                 }
@@ -137,6 +136,8 @@ class InitCommands extends Tasks
 
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Could not copy Drush aliases.");
+        } else {
+            $this->success("Drush aliases were copied to " . $drushPath);
         }
 
         return $task;
@@ -147,7 +148,7 @@ class InitCommands extends Tasks
      */
     public function confDrushAlias(): Result
     {
-        $this->say('setup:drupal-alias');
+        $this->say('Setup the Drupal aliases.');
         $drushFile = $this->getDocroot() . '/drush/sites/' . $this->getConfigValue('project.machine_name') . '.site.yml';
         if (
             empty($this->getConfigValue('remote.dev.host')) ||
@@ -159,8 +160,7 @@ class InitCommands extends Tasks
             empty($this->getConfigValue('remote.stage.root')) ||
             empty($this->getConfigValue('remote.stage.uri'))
         ) {
-            $this->io()->newLine();
-            $this->io()->warning('Drush aliases were not properly configured. Please add the information about remote server and run the command again.');
+            $this->warning('Drush aliases were not properly configured. Please add the information about remote server and run the command again.');
         }
         $task = $this->taskReplaceInFile($drushFile)
         ->from('${REMOTE_DEV_HOST}')
@@ -200,11 +200,11 @@ class InitCommands extends Tasks
      */
     public function confLando($opts = ['yes|y' => false]): Result
     {
-        $this->say('setup:lando');
+        $this->say('Setup lando.yml for local environment.');
         $landoFile = $this->getDocroot() . '/.lando.yml';
         if (!file_exists($landoFile)) {
             if (!$opts['yes']) {
-                $confirm = $this->io()->confirm('Lando file does not exist. Do you want to initialize lando for local development?', true);
+                $confirm = $this->confirm('Lando file does not exist. Do you want to initialize lando for local development?', true);
                 if (!$confirm) {
                     return Result::cancelled();
                 }
@@ -227,8 +227,7 @@ class InitCommands extends Tasks
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Could not setup Lando.");
         } else {
-            $this->io()->newLine();
-            $this->io()->success("Lando was successfully initialized. Run `lando start` to spin up the docker containers");
+            $this->success("Lando was successfully initialized. Run `lando start` to spin up the docker containers");
         }
 
         return $task;
@@ -239,11 +238,11 @@ class InitCommands extends Tasks
      */
     public function confGrumphp($opts = ['yes|y' => false]): Result
     {
-        $this->say('setup:grumphp');
+        $this->say('Setup Grumphp.');
         $grumphpFile = $this->getDocroot() . '/grumphp.yml';
         if (!file_exists($grumphpFile)) {
             if (!$opts['yes']) {
-                $confirm = $this->io()->confirm('Grumphp configuration not found. Do you want to initialize Grumphp?', true);
+                $confirm = $this->confirm('Grumphp configuration not found. Do you want to initialize Grumphp?', true);
                 if (!$confirm) {
                     return Result::cancelled();
                 }
@@ -268,8 +267,7 @@ class InitCommands extends Tasks
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Could not setup Lando.");
         } else {
-            $this->io()->newLine();
-            $this->io()->success("Grumphp is successfully configured to watch your commits.");
+            $this->success("Grumphp is successfully configured to watch your commits.");
         }
 
         return $task;
@@ -302,7 +300,7 @@ class InitCommands extends Tasks
      */
     public function initTests()
     {
-        $this->io()->title("Settings up Behat!");
+        $this->title("Settings up Behat!");
         $this->say('Installing the Behat packages...');
         $this->taskComposerRequire()
             ->dependency('behat/behat', '^3.8')
@@ -319,7 +317,6 @@ class InitCommands extends Tasks
 
         $behatDir = $this->getConfigValue('tests.behat.dir');
         $behatConfig = $this->getConfigValue('tests.behat.config');
-        $this->io()->newLine();
         $this->say('Initializing Behat at ' . $behatDir);
         $this->taskBehat()
             ->dir($this->getDocroot() . '/' . $behatDir)
@@ -332,7 +329,7 @@ class InitCommands extends Tasks
             ->copy($this->getDocroot() . self::CONFIG_PATH . "behat.yml", $behatConfig, true)
             ->run();
 
-        $this->io()->title("Settings up PHPUnit!");
+        $this->title("Settings up PHPUnit!");
         $this->say('Installing the PHPUnit packages...');
         $this->taskComposerRequire()
             ->dependency('symfony/phpunit-bridge', '^4.1')

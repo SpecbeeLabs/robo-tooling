@@ -5,6 +5,7 @@ namespace Specbee\DevSuite\Robo\Plugin\Commands;
 use Robo\Exception\TaskException;
 use Robo\Result;
 use Robo\Tasks;
+use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
@@ -13,6 +14,7 @@ use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 class TestCommands extends Tasks
 {
     use UtilityTrait;
+    use IO;
 
     /**
      * Run behat tests.
@@ -78,7 +80,7 @@ class TestCommands extends Tasks
      */
     public function test(): void
     {
-        $this->say("Running all tests...");
+        $this->title("Running all tests...");
         $this->testBehat();
         $this->testPhpUnit();
     }

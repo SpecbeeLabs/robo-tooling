@@ -4,6 +4,7 @@ namespace Specbee\DevSuite\Robo\Plugin\Commands;
 
 use Robo\Exception\TaskException;
 use Robo\Tasks;
+use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 
 /**
@@ -12,6 +13,7 @@ use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 class DeployCommand extends Tasks
 {
     use UtilityTrait;
+    use IO;
 
     /**
      * RoboFile constructor.
@@ -55,15 +57,14 @@ class DeployCommand extends Tasks
 
         // Put the site in maintenance mode in case of a Production deployment.
         if ($opts['production']) {
-            $this->io()->note('Putting the site in manintenance mode');
+            $this->say('Putting the site in manintenance mode');
             $this->drush()
             ->args('state:set')
             ->args('system.maintenance_mode')
             ->args('1')
             ->option('ansi')
             ->run();
-            $this->io()->newLine();
-            $this->io()->warning("Site is now offline");
+            $this->warning("Site is now offline");
         }
 
         // Run the drush deploy command which runs the below commands.
@@ -96,7 +97,7 @@ class DeployCommand extends Tasks
 
         #Disable maintenance mode for production deployments.
         if ($opts['production']) {
-            $this->io()->note('Disabling maintenance mode.');
+            $this->say('Disabling maintenance mode.');
             $this->drush()
             ->args('state:set')
             ->args('system.maintenance_mode')
@@ -104,7 +105,6 @@ class DeployCommand extends Tasks
             ->option('ansi')
             ->run();
         }
-        $this->io()->newLine();
-        $this->io()->success("🚀 Deployment completed. Site is now online. 🚀");
+        $this->success("🚀 Deployment completed. Site is now online. 🚀");
     }
 }

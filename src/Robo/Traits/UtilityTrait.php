@@ -7,8 +7,12 @@ use Robo\Exception\TaskException;
 use Robo\Robo;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Provides common utility methods.
+ */
 trait UtilityTrait
 {
+    use IO;
 
     /**
      * Undocumented function
@@ -80,8 +84,7 @@ trait UtilityTrait
                 ->run();
             }
         } else {
-            $this->io()->newLine();
-            $this->io()->note('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
+            $this->info('No theme found at ' . $this->getConfigValue('drupal.theme.path'));
         }
     }
 
