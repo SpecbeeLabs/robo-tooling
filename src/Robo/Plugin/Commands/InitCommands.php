@@ -217,6 +217,8 @@ class InitCommands extends Tasks
         }
 
         $task = $this->taskReplaceInFile($landoFile)
+        ->from('${PHP_VERSION}')
+        ->to($this->getConfigValue('project.php'))
         ->from('${PROJECT_NAME}')
         ->to($this->getConfigValue('project.machine_name'))
         ->taskReplaceInFile($landoFile)
