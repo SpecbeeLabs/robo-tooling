@@ -2,6 +2,8 @@
 
 namespace Specbee\DevSuite\Robo\Plugin\Commands;
 
+use Robo\Contract\VerbosityThresholdInterface;
+use Robo\Exception\TaskException;
 use Robo\Tasks;
 use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
@@ -9,7 +11,7 @@ use Specbee\DevSuite\Robo\Traits\UtilityTrait;
 /**
  * Defines command to initialize CI/CD service.
  */
-class CircleCiServiceCommand extends Tasks
+class CiServiceCommand extends Tasks
 {
     use UtilityTrait;
     use IO;
@@ -28,10 +30,22 @@ class CircleCiServiceCommand extends Tasks
             $this->info('CircleCI config file exists.', true);
             return;
         }
-        $source = $docroot . "/vendor/specbee/robo-tooling/scripts/.circleci";
+        $source = $docroot . "/vendor/specbee/robo-tooling/scripts/";
+        $dest = $docroot . "/.circleci/";
 
-        $this->taskFilesystemStack()
-        ->taskCopyDir([$source, $docroot])
+        $task = $this->taskFilesystemStack()
+        ->mkdir($dest)
+        ->mkdir($docroot . '/scripts/.circleci')
+        ->copy($source . 'circleci/config.yml', $dest . 'config.yml')
+        ->copy($source . 'deploy.sh', $docroot . '/scripts/.circleci/deploy.sh')
+        ->stopOnFail()
+        ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
         ->run();
+
+        if (!$task->wasSuccessful()) {
+            throw new TaskException($task, "Could not initialize Travis CI configuration.");
+        }
+
+        $this->success("A pre-configured CircleCI was copied to your repository root.");
     }
 }
