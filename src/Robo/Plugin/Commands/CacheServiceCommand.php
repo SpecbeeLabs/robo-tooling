@@ -21,7 +21,7 @@ class CacheServiceCommand extends Tasks
     /**
      * Setup redis.
      *
-     * @command init:service:cache
+     * @command service:init:cache
      */
     public function initServiceCache()
     {
