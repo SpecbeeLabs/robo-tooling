@@ -47,12 +47,6 @@ services:
       user: drupal
       password: drupal
       database: drupal
-  search:
-    type: elasticsearch:7
-    portforward: true
-    mem: 1025m
-    environment:
-      - cluster.name=${PROJECT_NAME}
 tooling:
   chromedriver:
     service: chromedriver
