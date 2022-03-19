@@ -23,7 +23,7 @@ class SecurityUpdateCommands extends Tasks
      */
     public function securityCheckDrupal()
     {
-        if ($this->getConfigValue('security.check.drupal')) {
+        if (!$this->getConfigValue('security.check.drupal')) {
             $this->info("Security check for Drupal is disabled in your Robo configurations.");
             return;
         }
@@ -47,7 +47,7 @@ class SecurityUpdateCommands extends Tasks
      */
     public function securityCheckComposer()
     {
-        if ($this->getConfigValue('security.check.composer')) {
+        if (!$this->getConfigValue('security.check.composer')) {
             $this->info("Security check for Composer packages is disabled in your Robo configurations.");
             return;
         }
