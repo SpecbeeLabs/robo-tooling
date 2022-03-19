@@ -1,7 +1,10 @@
-grumphp:
-  ascii: null
+parameters:
   git_dir: .
   bin_dir: vendor/bin
+grumphp:
+  ascii:
+    failed: ~
+    succeeded: ~
   tasks:
     phplint: ~
     yamllint: ~

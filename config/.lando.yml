@@ -2,12 +2,12 @@ name: ${PROJECT_NAME}
 recipe: drupal9
 config:
   webroot: ${WEBROOT}
+  php: ${PHP_VERSION}
   xdebug: false
   drush: '*'
   via: nginx
 services:
   appserver:
-    php: ${PHP_VERSION}
     build_as_root:
       - curl -sL https://deb.nodesource.com/setup_14.x | bash -
       - apt-get install -qq -y nodejs > /dev/null
