@@ -1,0 +1,72 @@
+image: specbee/drupalci:9-php8.0-apache
+
+clone:
+  depth: full
+
+pipelines:
+  default:
+    - step:
+        name: Build Composer dependencies
+        caches:
+          - composer
+        script:
+          - composer install --ansi
+        artifacts:
+          - 'vendor/**'
+          - 'docroot/core/**'
+          - 'docroot/modules/contrib/**'
+          - 'docroot/profiles/contrib/**'
+          - 'docroot/libraries/**'
+          - 'docroot/themes/contrib/**'
+    # - step:
+    #     name: Build frontend assets
+    #     caches:
+    #       - composer
+    #       - node
+    #     script:
+    #       - vendor/bin/robo build:theme
+    # - parallel:
+    #     - step:
+    #         name: Validate composer
+    #         caches:
+    #           - composer
+    #         script:
+    #           - vendor/bin/robo validate:composer
+    #     - step:
+    #         name: Composer security check
+    #         script:
+    #           - vendor/bin/robo security:check:composer
+    #     - step:
+    #         name: Run code sniffer
+    #         caches:
+    #           - composer
+    #         script:
+    #           - vendor/bin/robo validate:phpcs
+    #     - step:
+    #         name: Lint theme files
+    #         caches:
+    #           - composer
+    #           - node
+    #         script:
+    #           - vendor/bin/robo validate:theme
+    - step:
+        name: Run tests
+        caches:
+          - composer
+        services:
+          - mariadb
+          - chrome
+        script:
+          - ./scripts/.bitbucket/run
+          - vendor/bin/robo setup -n --db-url=mysql://root:root@127.0.0.1/drupal
+          - vendor/bin/robo security:check:drupal
+          - vendor/bin/robo behat --config=.bitbucket/behat.yml
+definitions:
+  services:
+    mariadb:
+      image: mariadb:latest
+      variables:
+        MYSQL_DATABASE: drupal
+        MYSQL_ROOT_PASSWORD: root
+    chrome:
+      image: selenium/standalone-chrome-debug:3.7.1-beryllium
