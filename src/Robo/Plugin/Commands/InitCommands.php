@@ -87,7 +87,7 @@ class InitCommands extends Tasks
         $this->copyDrushAliases($opts);
         $this->confDrushAlias();
         $this->confLando($opts);
-        $this->confGrumphp($opts);
+        $this->confDrupalQualityChecker($opts);
         $this->commitSetup();
     }
 
@@ -237,22 +237,22 @@ class InitCommands extends Tasks
     }
 
     /**
-     * Setup Grumphp file.
+     * Setup Quality checker.
      */
-    public function confGrumphp($opts = ['yes|y' => false]): Result
+    public function confDrupalQualityChecker($opts = ['yes|y' => false]): Result
     {
-        $this->say('Setup Grumphp.');
+        $this->say('Setup Drupal quality checker.');
         $grumphpFile = $this->getDocroot() . '/grumphp.yml';
         if (!file_exists($grumphpFile)) {
             if (!$opts['yes']) {
-                $confirm = $this->confirm('Grumphp configuration not found. Do you want to initialize Grumphp?', true);
+                $confirm = $this->confirm('GrumPHP configuration not found. Do you want to initialize GrumPHP?', true);
                 if (!$confirm) {
                     return Result::cancelled();
                 }
             }
 
             $this->taskComposerRequire()
-            ->dependency('vijaycs85/drupal-quality-checker')
+            ->dependency('specbee/drupal-quality-checker')
             ->dev()
             ->noInteraction()
             ->run();
@@ -268,9 +268,9 @@ class InitCommands extends Tasks
         ->run();
 
         if (!$task->wasSuccessful()) {
-            throw new TaskException($task, "Could not setup Lando.");
+            throw new TaskException($task, "Could not setup GrumPHP.");
         } else {
-            $this->success("Grumphp is successfully configured to watch your commits.");
+            $this->success("GrumPHP is successfully configured to watch your commits.");
         }
 
         return $task;
