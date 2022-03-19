@@ -3,7 +3,7 @@
 # to be executed again. Lando containers might needs a rebuild as well based on the changes
 # being done.
 project:
-  php: 8.0
+  php: "8.0"
   machine_name: specbee
   # Used for enforcing git commit message.
   prefix: SB
@@ -62,7 +62,11 @@ tests:
     config: tests/phpunit/phpunit.xml
     dir: tests/phpunit
 
-# Configure the flags for security checks.
+# Configure the flags for security update checks.
+security:
+  check:
+    drupal: true
+    composer: true
 
 # Used for setting up the Drush aliases. To properly use the Drush aliases remotely your SSH
 # keys needs to be added to the environments.
