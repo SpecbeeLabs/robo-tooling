@@ -28,7 +28,7 @@ class SecurityUpdateCommands extends Tasks
             return;
         }
         $result = $this->drush()
-        ->drush("pm:security")
+        ->args("pm:security")
         ->run();
 
         if ($result->getExitCode()) {
