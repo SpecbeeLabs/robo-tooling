@@ -49,7 +49,7 @@ class TestCommands extends Tasks
         ->verbose('v')
         ->noInteraction();
         if (!empty($opts['config'])) {
-            $task->option('config', $opts['config']);
+            $task->option('config', $behatDir . '/' . $opts['config']);
         } else {
             $task->option('config', $behatConfig);
         }
