@@ -38,7 +38,7 @@ class CiServiceCommand extends Tasks
         ->mkdir($dest)
         ->mkdir($docroot . '/scripts/.circleci')
         ->copy($source . 'circleci/config.yml', $dest . '/config.yml')
-        ->copy($source . 'deploy.sh', $docroot . '/scripts/.circleci/deploy.sh')
+        ->copy($source . 'deploy', $docroot . '/scripts/.circleci/deploy')
         ->stopOnFail()
         ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
         ->run();
@@ -70,11 +70,10 @@ class CiServiceCommand extends Tasks
         $dest = $docroot . "/scripts/.bitbucket";
 
         $task = $this->taskFilesystemStack()
-        ->copy($pipelineSource, $docroot)
-        ->copy($behatConfig, $docroot . "/config/ci.behat.yml")
-        ->mkdir($dest)
-        ->copy($docroot . "/vendor/specbee/robo-tooling/ci/bitbucket/run", $docroot . "/scripts/run")
-        ->copy($docroot . "/vendor/specbee/robo-tooling/ci/bitbucket/deploy", $docroot . "/scripts/deploy")
+        ->copy($pipelineSource, $docroot . "/bitbucket-pipelines.yml")
+        ->copy($behatConfig, $docroot . "/tests/behat/ci.behat.yml")
+        ->copy($docroot . "/vendor/specbee/robo-tooling/ci/run", $docroot . "/scripts/.bitbucket/run")
+        ->copy($docroot . "/vendor/specbee/robo-tooling/ci/deploy", $docroot . "/scripts/.bitbucket/deploy")
         ->run();
 
         if (!$task->wasSuccessful()) {
