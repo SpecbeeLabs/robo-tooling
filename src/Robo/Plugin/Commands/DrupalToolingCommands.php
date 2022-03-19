@@ -29,7 +29,6 @@ class DrupalToolingCommands extends DrupalCommands
     public function setup($opts = ['db-url' => '', 'no-interaction|n' => false]): void
     {
         $this->title('Setting up a new Drupal site - ' . $this->getConfigValue('project.human_name'));
-        $this->installComposerDependencies();
         $this->info('Building theme..');
         $this->buildTheme();
         $this->drupalInstall($opts);
@@ -51,7 +50,6 @@ class DrupalToolingCommands extends DrupalCommands
     public function drupalUpdate(): void
     {
         $this->title('Updating & refreshing Drupal database');
-        $this->installComposerDependencies();
         $this->updateDatabase();
         $this->importConfig();
     }
