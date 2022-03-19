@@ -30,14 +30,14 @@ class CiServiceCommand extends Tasks
             $this->info('CircleCI config file exists.', true);
             return;
         }
-        $source = $docroot . "/vendor/specbee/robo-tooling/scripts/";
+        $source = $docroot . "/vendor/specbee/robo-tooling/ci/";
         $dest = $docroot . "/.circleci/";
 
         $task = $this->taskFilesystemStack()
         ->mkdir($dest)
-        ->mkdir($docroot . '/scripts/.circleci')
+        ->mkdir($docroot . '/ci/.circleci')
         ->copy($source . 'circleci/config.yml', $dest . 'config.yml')
-        ->copy($source . 'deploy.sh', $docroot . '/scripts/.circleci/deploy.sh')
+        ->copy($source . 'deploy.sh', $docroot . '/ci/.circleci/deploy.sh')
         ->stopOnFail()
         ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
         ->run();

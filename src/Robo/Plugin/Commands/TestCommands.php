@@ -25,7 +25,7 @@ class TestCommands extends Tasks
      *
      * @return Robo\Result
      */
-    public function testBehat(): Result
+    public function testBehat($opts = ['config' => '',]): Result
     {
         $this->say("Running behat...");
         if (empty($this->getConfigValue('tests.behat.config'))) {
@@ -46,9 +46,13 @@ class TestCommands extends Tasks
         ->format('pretty')
         ->colors()
         ->option('strict')
-        ->option('config', $behatConfig)
         ->verbose('v')
         ->noInteraction();
+        if (!empty($opts['config'])) {
+            $task->option('config', $opts['config']);
+        } else {
+            $task->option('config', $behatConfig);
+        }
         if (!empty($this->getConfigValue('tests.behat.tags'))) {
             $task->option('tags', $this->getConfigValue('tests.behat.tags'));
         }
