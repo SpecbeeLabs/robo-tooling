@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "consolidation/robo": "^1.4 || ^2",
+        "consolidation/robo": "^3.0",
         "drush-ops/behat-drush-endpoint": "^9.4",
         "drush/drush": "^10",
         "webflo/drupal-finder": "^1.2"
