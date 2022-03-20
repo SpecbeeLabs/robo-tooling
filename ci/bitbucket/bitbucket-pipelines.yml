@@ -62,6 +62,45 @@ pipelines:
             - vendor/bin/robo setup -n --db-url=mysql://root:root@127.0.0.1/drupal
             - vendor/bin/robo security:check:drupal
             - vendor/bin/robo behat --config=ci.behat.yml
+  branches:
+    develop:
+      - step:
+          name: deploy:dev
+          deployment: test
+          caches:
+            - "docker"
+          script:
+            - pipe: atlassian/ssh-run:0.4.0
+              variables:
+                SSH_USER: $SSH_USER
+                SERVER: $SSH_HOST
+                MODE: 'command'
+                COMMAND: '$DOCROOT_DEV/scripts/.bitbucket/deploy_branch $SITE $DEV'
+                # NOTE: environment variables doesn't work on Bitbucket via the config file.
+                # Navigate to "Repository settings > Pipelines > Repository variables"
+                # and add the following variables.
+                # DOCROOT_STAGE - Path the the docroot of your dev site.
+                # SITE - Name of you site.
+                # STAGE - The staging dev name.
+    master:
+      - step:
+          name: deploy:staging
+          deployment: staging
+          caches:
+            - "docker"
+          script:
+            - pipe: atlassian/ssh-run:0.4.0
+              variables:
+                SSH_USER: $SSH_USER
+                SERVER: $SSH_HOST
+                MODE: 'command'
+                COMMAND: '$DOCROOT_STAGE/scripts/.bitbucket/deploy_branch $SITE $STAGE'
+                # NOTE: environment variables doesn't work on Bitbucket via the config file.
+                # Navigate to "Repository settings > Pipelines > Repository variables"
+                # and add the following variables.
+                # DOCROOT_STAGE - Path the the docroot of your staging site.
+                # SITE - Name of you site.
+                # STAGE - The staging environment name.
 definitions:
   services:
     mariadb:
