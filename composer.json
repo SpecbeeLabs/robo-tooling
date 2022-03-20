@@ -13,7 +13,8 @@
         "consolidation/robo": "^3.0",
         "drush-ops/behat-drush-endpoint": "^9.4",
         "drush/drush": "^10",
-        "webflo/drupal-finder": "^1.2"
+        "webflo/drupal-finder": "^1.2",
+        "grasmash/yaml-cli": "^2.0"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.13"
