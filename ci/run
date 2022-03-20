@@ -2,10 +2,12 @@
 
 # Run Drupal application from the /app directory.
 
-set -e
+set -ev
 
 if [[ "${BITBUCKET_CLONE_DIR}" ]]; then
   chown -R www-data:www-data $BITBUCKET_CLONE_DIR
   ln -sf $BITBUCKET_CLONE_DIR/* /app
   service apache2 restart
 fi
+
+set +v

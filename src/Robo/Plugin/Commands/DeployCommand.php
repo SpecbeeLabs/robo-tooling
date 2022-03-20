@@ -38,6 +38,9 @@ class DeployCommand extends Tasks
         ->ansi()
         ->run();
 
+        // Build frontend assets
+        $this->buildTheme();
+
         // Check site status to debug in case of failed deployment.
         $this->drush()
         ->args('core:status')
@@ -86,6 +89,18 @@ class DeployCommand extends Tasks
             return new TaskException($task, "Deployment failed. Check the logs for more information");
         }
 
+        // Import the latest configuration again. This includes the latest
+        // configuration_split configuration. Importing this twice ensures that
+        // the latter command enables and disables modules based upon the most up
+        // to date configuration. Additional information and discussion can be
+        // found here:
+        // https://github.com/drush-ops/drush/issues/2449#issuecomment-708655673
+        $task = $task = $this->drush()
+        ->arg('config:import')
+        ->option('ansi')
+        ->option('no-interaction')
+        ->run();
+
         # Run cron.
         $this->drush()
         ->args('core-cron')
@@ -105,6 +120,7 @@ class DeployCommand extends Tasks
             ->option('ansi')
             ->run();
         }
+
         $this->success("🚀 Deployment completed. Site is now online. 🚀");
     }
 }
