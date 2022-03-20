@@ -2,6 +2,16 @@
 
 set -ev
 
+site="$1"
+target_branch="$2"
+
+# Prep for BLT commands.
+repo_root="/var/www/html/$site/$target_env"
+export PATH=$repo_root/vendor/bin:$PATH
+cd $repo_root
+
+yaml-cli get:value robo.yml project.git.remote >> ~/.ssh/known_hosts
+robo fetch:remote:branch origin $target_branch
 robo deploy
 
 set +v

@@ -25,11 +25,28 @@ class DeployCommand extends Tasks
     }
 
     /**
+     * Fetch remote changes from git repository.
+     *
+     * @command fetch:remote:branch
+     */
+    public function fetchRemoteBranch($remote, $branch)
+    {
+        $this->say('Remove any untracked file just for safety and fetch the remote changes.');
+        $this->taskGitStack()
+        ->stopOnFail()
+        ->checkout('.')
+        ->exec('clean -f -d')
+        ->exec('fetch ' . $remote . '/' . $branch)
+        ->exec('rebase ' . $remote . '/' . $branch)
+        ->run();
+    }
+
+    /**
      * Run deployment commands.
      *
      * @command deploy
      */
-    public function deploy($opts = ['production' => false])
+    public function deploy()
     {
         // Install composer dependencies with --no-dev flag.
         $this->taskComposerInstall()
@@ -59,16 +76,14 @@ class DeployCommand extends Tasks
         ->run();
 
         // Put the site in maintenance mode in case of a Production deployment.
-        if ($opts['production']) {
-            $this->say('Putting the site in manintenance mode');
-            $this->drush()
-            ->args('state:set')
-            ->args('system.maintenance_mode')
-            ->args('1')
-            ->option('ansi')
-            ->run();
-            $this->warning("Site is now offline");
-        }
+        $this->say('Putting the site in manintenance mode');
+        $this->drush()
+        ->args('state:set')
+        ->args('system.maintenance_mode')
+        ->args('1')
+        ->option('ansi')
+        ->run();
+        $this->warning("Site is now offline");
 
         // Run the drush deploy command which runs the below commands.
         /**
@@ -86,6 +101,7 @@ class DeployCommand extends Tasks
         ->run();
 
         if (!$task->wasSuccessful()) {
+            $this->disableMaintenance();
             return new TaskException($task, "Deployment failed. Check the logs for more information");
         }
 
@@ -95,7 +111,7 @@ class DeployCommand extends Tasks
         // to date configuration. Additional information and discussion can be
         // found here:
         // https://github.com/drush-ops/drush/issues/2449#issuecomment-708655673
-        $task = $task = $this->drush()
+        $task = $this->drush()
         ->arg('config:import')
         ->option('ansi')
         ->option('no-interaction')
@@ -111,16 +127,19 @@ class DeployCommand extends Tasks
         $this->cacheRebuild();
 
         #Disable maintenance mode for production deployments.
-        if ($opts['production']) {
-            $this->say('Disabling maintenance mode.');
-            $this->drush()
-            ->args('state:set')
-            ->args('system.maintenance_mode')
-            ->args('0')
-            ->option('ansi')
-            ->run();
-        }
+        $this->disableMaintenance();
 
         $this->success("🚀 Deployment completed. Site is now online. 🚀");
+    }
+
+    private function disableMaintenance()
+    {
+        $this->say('Disabling maintenance mode.');
+        $this->drush()
+        ->args('state:set')
+        ->args('system.maintenance_mode')
+        ->args('0')
+        ->option('ansi')
+        ->run();
     }
 }
