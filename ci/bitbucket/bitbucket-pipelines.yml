@@ -4,63 +4,64 @@ clone:
   depth: full
 
 pipelines:
-  default:
-    - step:
-        name: Build Composer dependencies
-        caches:
-          - composer
-        script:
-          - composer install --ansi
-        artifacts:
-          - 'vendor/**'
-          - 'docroot/core/**'
-          - 'docroot/modules/contrib/**'
-          - 'docroot/profiles/contrib/**'
-          - 'docroot/libraries/**'
-          - 'docroot/themes/contrib/**'
-    - step:
-        name: Build frontend assets
-        caches:
-          - composer
-          - node
-        script:
-          - vendor/bin/robo build:theme
-    - parallel:
-        - step:
-            name: Static analysis - Composer validate
-            caches:
-              - composer
-            script:
-              - vendor/bin/robo validate:composer
-        - step:
-            name: Static analysis - Composer security check
-            script:
-              - vendor/bin/robo security:check:composer
-        - step:
-            name: Static analysis - PHPCS
-            caches:
-              - composer
-            script:
-              - vendor/bin/robo validate:phpcs
-        - step:
-            name: Static analysis - Frontend lint
-            caches:
-              - composer
-              - node
-            script:
-              - vendor/bin/robo validate:theme
-    - step:
-        name: Run tests
-        caches:
-          - composer
-        services:
-          - mariadb
-          - chrome
-        script:
-          - ./scripts/.bitbucket/run
-          - vendor/bin/robo setup -n --db-url=mysql://root:root@127.0.0.1/drupal
-          - vendor/bin/robo security:check:drupal
-          - vendor/bin/robo behat --config=ci.behat.yml
+  pull-requests:
+    '**':
+      - step:
+          name: Build Composer dependencies
+          caches:
+            - composer
+          script:
+            - composer install --ansi
+          artifacts:
+            - 'vendor/**'
+            - 'docroot/core/**'
+            - 'docroot/modules/contrib/**'
+            - 'docroot/profiles/contrib/**'
+            - 'docroot/libraries/**'
+            - 'docroot/themes/contrib/**'
+      - step:
+          name: Build frontend assets
+          caches:
+            - composer
+            - node
+          script:
+            - vendor/bin/robo build:theme
+      - parallel:
+          - step:
+              name: Static analysis - Composer validate
+              caches:
+                - composer
+              script:
+                - vendor/bin/robo validate:composer
+          - step:
+              name: Static analysis - Composer security check
+              script:
+                - vendor/bin/robo security:check:composer
+          - step:
+              name: Static analysis - PHPCS
+              caches:
+                - composer
+              script:
+                - vendor/bin/robo validate:phpcs
+          - step:
+              name: Static analysis - Frontend lint
+              caches:
+                - composer
+                - node
+              script:
+                - vendor/bin/robo validate:theme
+      - step:
+          name: Run tests
+          caches:
+            - composer
+          services:
+            - mariadb
+            - chrome
+          script:
+            - ./scripts/.bitbucket/run
+            - vendor/bin/robo setup -n --db-url=mysql://root:root@127.0.0.1/drupal
+            - vendor/bin/robo security:check:drupal
+            - vendor/bin/robo behat --config=ci.behat.yml
 definitions:
   services:
     mariadb:
