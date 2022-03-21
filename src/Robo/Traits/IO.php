@@ -53,11 +53,10 @@ trait IO
         $lines = explode("\n", $text);
         $length = array_reduce(array_map('strlen', $lines), 'max');
         $len = $length + 12;
-
-        $io->newLine();
-        $this->writeln("<fg=cyan;options=bold;>" . str_repeat('-', $len) . "</fg=cyan;options=bold>");
-        $this->writeln("<fg=cyan;options=bold;>$char $text</fg=cyan;options=bold;>");
-        $this->writeln("<fg=cyan;options=bold;>" . str_repeat('-', $len) . "</fg=cyan;options=bold>");
+        $decor = "<fg=cyan;options=bold;>" . str_repeat('-', $len) . "</fg=cyan;options=bold>";
+        $this->writeln($decor);
+        $io->writeln("<fg=cyan;options=bold;>$char $text</fg=cyan;options=bold;>");
+        $this->writeln($decor);
         $io->newLine();
     }
 
@@ -69,13 +68,11 @@ trait IO
     protected function info($text, $skip = false)
     {
         $io = new SymfonyStyle($this->input(), $this->output());
-        $char = $this->decorationCharacter('[NOTE]', 'ℹ[NOTE]');
-        $message = "$char   $text";
+        $char = $this->decorationCharacter('[NOTE]', 'ℹ[NOTE] ');
         if ($skip) {
-            $message = "$char $text Skiping....";
+            $text = "$text Skiping....";
         }
-        $io->writeln("<fg=blue;options=bold;>$message</fg=blue;options=bold;>");
-        $io->newLine();
+        $io->block($text, null, "fg=blue;options=bold;", $char);
     }
 
     /**
@@ -99,10 +96,8 @@ trait IO
     protected function warning($text)
     {
         $io = new SymfonyStyle($this->input(), $this->output());
-        $char = $this->decorationCharacter('![WARNING]', '⚠️  [WARNING]');
-        $message = "$char   $text";
-        $io->writeln("<fg=yellow;options=bold;>$message</fg=yellow;options=bold;>");
-        $io->newLine();
+        $char = $this->decorationCharacter('![WARNING]', '⚠️  [WARNING] ');
+        $io->block($text, null, "fg=yellow;options=bold;", $char);
     }
 
     /**
@@ -114,10 +109,8 @@ trait IO
     protected function success($text)
     {
         $io = new SymfonyStyle($this->input(), $this->output());
-        $char = $this->decorationCharacter('>', '✅ [OK]');
-        $message = "$char   $text";
-        $io->writeln("<fg=green;options=bold;>$message</fg=green;options=bold;>");
-        $io->newLine();
+        $char = $this->decorationCharacter('>', '✅ [OK] ');
+        $io->block($text, null, "fg=green;options=bold;", $char);
     }
 
     /**
@@ -129,19 +122,7 @@ trait IO
     protected function error($text)
     {
         $io = new SymfonyStyle($this->input(), $this->output());
-        $char = $this->decorationCharacter('>', '❌ [ERROR]');
-        $message = "$char   $text";
-        $io->writeln("<fg=red;options=bold;>$message</fg=red;options=bold;>");
-        $io->newLine();
-    }
-
-    public function myio(SymfonyStyle $io)
-    {
-        $this->say("This is a normal text");
-        $this->title("This is a title");
-        $this->info("This is an info", true);
-        $this->warning("This is a warning");
-        $this->success("This is a success");
-        $this->error("This is an error");
+        $char = $this->decorationCharacter('>', '❌ [ERROR] ');
+        $io->block($text, null, "fg=red;options=bold;", $char);
     }
 }
