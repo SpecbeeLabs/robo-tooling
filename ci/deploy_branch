@@ -2,13 +2,12 @@
 
 set -ev
 
-site="$1"
+docroot="$1"
 target_branch="$2"
 
 # Prep for Robo commands.
-repo_root="/var/www/html/$site/$target_branch"
-export PATH=$repo_root/vendor/bin:$PATH
-cd $repo_root
+export PATH=$docroot/vendor/bin:$PATH
+cd $docroot
 
 yaml-cli get:value robo.yml project.git.remote >> ~/.ssh/known_hosts
 robo fetch:remote:branch origin $target_branch

@@ -75,7 +75,7 @@ pipelines:
                 SSH_USER: $SSH_USER
                 SERVER: $SSH_HOST
                 MODE: 'command'
-                COMMAND: '$DOCROOT_DEV/scripts/.bitbucket/deploy_branch $SITE $DEV'
+                COMMAND: '$DOCROOT_DEV/scripts/.bitbucket/deploy_branch $DOCROOT_STAGE develop'
                 # NOTE: environment variables doesn't work on Bitbucket via the config file.
                 # Navigate to "Repository settings > Pipelines > Repository variables"
                 # and add the following variables.
@@ -94,7 +94,7 @@ pipelines:
                 SSH_USER: $SSH_USER
                 SERVER: $SSH_HOST
                 MODE: 'command'
-                COMMAND: '$DOCROOT_STAGE/scripts/.bitbucket/deploy_branch $SITE $STAGE'
+                COMMAND: '$DOCROOT_STAGE/scripts/.bitbucket/deploy_branch $DOCROOT_STAGE master'
                 # NOTE: environment variables doesn't work on Bitbucket via the config file.
                 # Navigate to "Repository settings > Pipelines > Repository variables"
                 # and add the following variables.
