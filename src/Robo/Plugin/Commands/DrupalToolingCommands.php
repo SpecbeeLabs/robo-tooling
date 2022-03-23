@@ -50,8 +50,10 @@ class DrupalToolingCommands extends DrupalCommands
     public function drupalUpdate(): void
     {
         $this->title('Updating & refreshing Drupal database');
+        $this->buildTheme();
         $this->updateDatabase();
         $this->importConfig();
+        $this->cacheRebuild();
     }
 
     /**
