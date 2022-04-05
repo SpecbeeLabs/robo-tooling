@@ -37,7 +37,7 @@ class DeployCommand extends Tasks
         ->checkout('.')
         ->exec('clean -f -d')
         ->checkout($branch)
-        ->exec('fetch ' . $remote . '/' . $branch)
+        ->exec('fetch ' . $remote . ' ' . $branch)
         ->exec('rebase ' . $remote . '/' . $branch)
         ->run();
     }
