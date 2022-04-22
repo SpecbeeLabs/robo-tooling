@@ -36,13 +36,14 @@ class DrupalCommands extends Tasks
     {
         $this->say('drupal:install');
         $task = $this->drush()
-        ->args('site-install')
-        ->arg($this->getConfigValue('drupal.profile'))
-        ->option('site-name', $this->getConfigValue('project.human_name'), '=')
-        ->option('site-mail', $this->getConfigValue('drupal.account.mail'), '=')
-        ->option('account-name', $this->getConfigValue('drupal.account.name'), '=')
-        ->option('account-mail', $this->getConfigValue('drupal.account.mail'), '=')
-        ->option('ansi');
+            ->args('site-install')
+            ->args('-v')
+            ->arg($this->getConfigValue('drupal.profile'))
+            ->option('site-name', $this->getConfigValue('project.human_name'), '=')
+            ->option('site-mail', $this->getConfigValue('drupal.account.mail'), '=')
+            ->option('account-name', $this->getConfigValue('drupal.account.name'), '=')
+            ->option('account-mail', $this->getConfigValue('drupal.account.mail'), '=')
+            ->option('ansi');
 
         if ($opts['no-interaction']) {
             $task->arg('--no-interaction');
