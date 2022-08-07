@@ -3,6 +3,7 @@ recipe: drupal9
 config:
   webroot: ${WEBROOT}
   php: ${PHP_VERSION}
+  database: mysql:8.0
   xdebug: false
   drush: '*'
   via: nginx
@@ -34,7 +35,6 @@ services:
       - appserver
     portforward: true
   database:
-    type: mariadb:10.4
     creds:
       user: drupal
       password: drupal
