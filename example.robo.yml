@@ -24,7 +24,7 @@ drupal:
     lint: npm lint
   # Configure the admin account details
   account:
-    name: jarvis
+    name: webadmin
     mail: no-reply@specbee.in
   config:
     path: 'config/sync'
