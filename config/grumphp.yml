@@ -6,10 +6,50 @@ grumphp:
     failed: ~
     succeeded: ~
   tasks:
-    phplint: ~
-    yamllint: ~
     composer: ~
     composer_normalize: ~
+    git_branch_name:
+      whitelist:
+          - "/${PROJECT_PREFIX}-([0-9]*)/"
+      blacklist:
+          - "develop"
+          - "master"
+    git_blacklist:
+      keywords:
+        - "<<<<<<< HEAD"
+        - "======="
+        - ">>>>>>>"
+        - "die\\("
+        - "var_dump\\("
+        - "syslog\\("
+        - "print_r\\("
+        - "dpm\\("
+        - "dump\\("
+        - "console.log\\("
+        - "\\{\\{ debug\\(\\) \\}\\}"
+      whitelist_patterns:
+        - /^((?!grumphp.yml).)*$/
+      triggered_by:
+        - inc
+        - install
+        - js
+        - module
+        - php
+        - profile
+        - test
+        - theme
+      regexp_type: E
+    git_commit_message:
+      allow_empty_message: false
+      enforce_capitalized_subject: true
+      enforce_no_subject_punctuations: false
+      enforce_no_subject_trailing_period: false
+      enforce_single_lined_subject: true
+      max_subject_width: 0
+      matchers:
+        'Must follow the pattern': '/(^${PROJECT_PREFIX}-[0-9]+(: )[^ ].{15,}\.)|(Merge branch (.)+)/'
+      case_insensitive: true
+      multiline: false
     jsonlint: ~
     phpcs:
       standard:
@@ -34,14 +74,5 @@ grumphp:
         - txt
         - md
         - yml
-    git_commit_message:
-      allow_empty_message: false
-      enforce_capitalized_subject: true
-      enforce_no_subject_punctuations: false
-      enforce_no_subject_trailing_period: false
-      enforce_single_lined_subject: true
-      max_subject_width: 0
-      matchers:
-        'Must follow the pattern': '/(^${PROJECT_PREFIX}-[0-9]+(: )[^ ].{15,}\.)|(Merge branch (.)+)/'
-      case_insensitive: true
-      multiline: false
+    phplint: ~
+    yamllint: ~
