@@ -165,7 +165,12 @@ class ValidateCommands extends Tasks
             ->run();
         }
 
-        $this->say('PHPStan config file not found. Skipping..');
+        $this->say('');
+        $this->info('PHPStan config file not found.', true);
+            return $this->taskExecStack()
+            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
+            ->exec('echo Skipping...')
+            ->run();
     }
 
     /**
