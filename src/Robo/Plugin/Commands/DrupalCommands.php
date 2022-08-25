@@ -41,8 +41,8 @@ class DrupalCommands extends Tasks
             $connection = $opts['db-url'];
         } else {
             $user = $this->getConfigValue('drupal.database.creds.user');
-            $pass = $this->getConfigValue('drupal.database.creds.pass');
-            $db = $this->getConfigValue('drupal.database.creds.db');
+            $pass = $this->getConfigValue('drupal.database.creds.password');
+            $db = $this->getConfigValue('drupal.database.creds.database');
             $host = $this->getConfigValue('drupal.database.host');
             $driver = $this->getConfigValue('drupal.database.driver');
             $connection = $driver . '://' . $user . ':' . $pass . '@' . $host . '/' . $db;
