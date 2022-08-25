@@ -123,7 +123,7 @@ class ValidateCommands extends Tasks
     public function validatePhpCs(): Result
     {
         $tasks = [];
-        $this->say("Validating Drupal coding standards...");
+        $this->say("validate:phpcs");
         foreach ($this->getCustomCodePaths() as $path) {
             if (!file_exists($path)) {
                 $this->info('Path ' . $path . ' not found. PHPCS will likely fail.', true);
@@ -181,7 +181,7 @@ class ValidateCommands extends Tasks
      */
     public function validateTheme(): Result
     {
-        $this->say("Validating frontend assets...");
+        $this->say("validate:theme");
 
         // Return early if the set theme path is not valid.
         if (!file_exists($this->getConfigValue('drupal.theme.path'))) {
