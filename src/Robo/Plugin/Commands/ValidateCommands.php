@@ -148,6 +148,27 @@ class ValidateCommands extends Tasks
     }
 
     /**
+     * Validate custom code using PHPStan.
+     *
+     * @command validate:phpstan
+     *
+     * @aliases phpst
+    */
+    public function validatePhpStan(): Result
+    {
+        $this->say('validate:phpstan');
+
+        if (file_exists($this->getDocroot() . '/phpstan.neon')) {
+            return $this->taskExecStack()
+            ->stopOnFail()
+            ->exec('vendor/bin/phpstan --memory-limit=-1')
+            ->run();
+        }
+
+        $this->say('PHPStan config file not found. Skipping..');
+    }
+
+    /**
      * Lint the theme files.
      *
      * @command validate:theme
@@ -193,6 +214,7 @@ class ValidateCommands extends Tasks
         $this->title('Validating fileset...');
         $this->validateComposer();
         $this->validatePhpCs();
+        $this->validatePhpStan();
         $this->validateTheme();
     }
 }
