@@ -51,9 +51,8 @@ trait IO
         $char = $this->decorationCharacter('>', '💡');
         $lines = explode("\n", $text);
         $length = array_reduce(array_map('strlen', $lines), 'max');
-        $len = $length + 12;
+        $len = $length + 8;
         $decor = "<fg=cyan;options=bold;>" . str_repeat('-', $len) . "</fg=cyan;options=bold>";
-        $this->writeln($decor);
         $io->writeln("<fg=cyan;options=bold;>$char $text</fg=cyan;options=bold;>");
         $this->writeln($decor);
         $io->newLine();
@@ -67,7 +66,7 @@ trait IO
     protected function info($text, $skip = false)
     {
         $io = new SymfonyStyle($this->input(), $this->output());
-        $char = $this->decorationCharacter('[NOTE]', 'ℹ[NOTE] ');
+        $char = $this->decorationCharacter('[NOTE]', 'ℹ ');
         if ($skip) {
             $text = "$text Skiping....";
         }

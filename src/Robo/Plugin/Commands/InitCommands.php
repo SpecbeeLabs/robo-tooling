@@ -2,7 +2,6 @@
 
 namespace Specbee\DevSuite\Robo\Plugin\Commands;
 
-use ReflectionClass;
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
@@ -18,7 +17,7 @@ class InitCommands extends Tasks
     use UtilityTrait;
     use IO;
 
-    private const CONFIG_PATH = '/vendor/specbee/robo-tooling/config/';
+    private const CONFIG_PATH = '/vendor/specbee/robo-tooling/assets/conf';
 
     public function __construct()
     {
@@ -26,8 +25,8 @@ class InitCommands extends Tasks
         if (!file_exists($this->getDocroot() . "/robo.yml")) {
             throw new TaskException(
                 $this,
-                "No Robo configuration file detected.
-  Copy the example.robo.yml file to your project root and rename it to robo.yml."
+                "No Robo configuration file detected. Copy the example.robo.yml
+                file to your project root and rename it to robo.yml."
             );
         }
     }
@@ -85,7 +84,6 @@ class InitCommands extends Tasks
     {
         $this->title("Initializing and configuring project tool at " . $this->getDocroot());
         $this->copyDrushAliases($opts);
-        $this->confDrushAlias();
         $this->confLando($opts);
         $this->confDrupalQualityChecker($opts);
         $this->commitSetup();
@@ -117,79 +115,31 @@ class InitCommands extends Tasks
         // Attempt to create an aliase file if does not exists.
         if (!file_exists($drushPath . "/default.site.yml")) {
             if (!$opts['yes']) {
-                $confirm = $this->confirm('Default Drush aliases file does not exist. Do you want to create one?', true);
+                $confirm = $this->confirm('Default Drush aliases file does not
+                exist. Do you want to create one?', true);
                 if (!$confirm) {
                     return Result::cancelled();
                 }
             }
 
+            $source = $this->getDocroot() . self::CONFIG_PATH . "/default.sites.yml";
+            $dest = $drushPath . '/default.sites.yml';
+
             $this->taskFilesystemStack()
             ->mkdir($drushPath)
-            ->touch($drushPath . '/default.sites.yml')
-            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/config/default.sites.yml", $drushPath . '/default.sites.yml', true)
+            ->touch($dest)
+            ->copy($source, $dest, true)
             ->run();
         }
 
         $task = $this->taskFilesystemStack()
-        ->rename($drushPath . "/default.sites.yml", $aliasPath, false)
+        ->rename($dest, $aliasPath, false)
         ->run();
 
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Could not copy Drush aliases.");
         } else {
             $this->success("Drush aliases were copied to " . $drushPath);
-        }
-
-        return $task;
-    }
-
-    /**
-     * Setup the Drupal aliases.
-     */
-    public function confDrushAlias(): Result
-    {
-        $this->say('Setup the Drupal aliases.');
-        $drushFile = $this->getDocroot() . '/drush/sites/' . $this->getConfigValue('project.machine_name') . '.site.yml';
-        if (
-            empty($this->getConfigValue('remote.dev.host')) ||
-            empty($this->getConfigValue('remote.dev.user')) ||
-            empty($this->getConfigValue('remote.dev.root')) ||
-            empty($this->getConfigValue('remote.dev.uri')) ||
-            empty($this->getConfigValue('remote.stage.host')) ||
-            empty($this->getConfigValue('remote.stage.user')) ||
-            empty($this->getConfigValue('remote.stage.root')) ||
-            empty($this->getConfigValue('remote.stage.uri'))
-        ) {
-            $this->warning('Drush aliases were not properly configured. Please add the information about remote server and run the command again.');
-        }
-        $task = $this->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_DEV_HOST}')
-        ->to($this->getConfigValue('remotes.dev.host'))
-        ->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_DEV_USER}')
-        ->to($this->getConfigValue('remotes.dev.user'))
-        ->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_DEV_ROOT}')
-        ->to($this->getConfigValue('remotes.dev.root'))
-        ->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_DEV_URI}')
-        ->to($this->getConfigValue('remotes.dev.uri'))
-        ->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_STAGE_HOST}')
-        ->to($this->getConfigValue('remotes.stage.host'))
-        ->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_STAGE_USER}')
-        ->to($this->getConfigValue('remotes.stage.user'))
-        ->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_STAGE_ROOT}')
-        ->to($this->getConfigValue('remotes.stage.root'))
-        ->taskReplaceInFile($drushFile)
-        ->from('${REMOTE_STAGE_URI}')
-        ->to($this->getConfigValue('remotes.stage.uri'))
-        ->run();
-
-        if (!$task->wasSuccessful()) {
-            throw new TaskException($task, "Could not configure Drush aliases.");
         }
 
         return $task;
@@ -204,15 +154,18 @@ class InitCommands extends Tasks
         $landoFile = $this->getDocroot() . '/.lando.yml';
         if (!file_exists($landoFile)) {
             if (!$opts['yes']) {
-                $confirm = $this->confirm('Lando file does not exist. Do you want to initialize lando for local development?', true);
+                $confirm = $this->confirm('Lando file does not exist. Do you
+                want to initialize lando for local development?', true);
                 if (!$confirm) {
                     return Result::cancelled();
                 }
             }
 
+            $source = $this->getDocroot() . self::CONFIG_PATH . "/.lando.yml";
+
             $this->taskFilesystemStack()
             ->touch($landoFile)
-            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/config/.lando.yml", $landoFile, true)
+            ->copy($source, $landoFile, true)
             ->run();
         }
 
@@ -255,11 +208,14 @@ class InitCommands extends Tasks
             ->dependency('specbee/drupal-quality-checker')
             ->dev()
             ->noInteraction()
+            ->option('no-progress')
             ->run();
+
+            $source = $this->getDocroot() . self::CONFIG_PATH . "/grumphp.yml";
 
             $this->taskFilesystemStack()
             ->touch($grumphpFile)
-            ->copy($this->getDocroot() . "/vendor/specbee/robo-tooling/config/grumphp.yml", $grumphpFile, true)
+            ->copy($source, $grumphpFile, true)
             ->run();
         }
         $task = $this->taskReplaceInFile($grumphpFile)
@@ -285,7 +241,7 @@ class InitCommands extends Tasks
         $this->say('Normalizing composer.json file...');
         $this->taskExec('composer normalize')
         ->run();
-        return $this->taskGitStack()
+        $task = $this->taskGitStack()
         ->stopOnFail()
         ->dir($this->getDocroot())
         ->add('-A')
@@ -294,6 +250,12 @@ class InitCommands extends Tasks
         ->printOutput(false)
         ->printMetadata(false)
         ->run();
+
+        if (!$task->wasSuccessful()) {
+            throw new TaskException($task, $task->getMessage());
+        }
+
+        return $task;
     }
 
     /**
@@ -329,7 +291,7 @@ class InitCommands extends Tasks
         $this->say('Configuring Behat at ' . $behatDir);
         $this->taskFilesystemStack()
             ->touch($behatConfig)
-            ->copy($this->getDocroot() . self::CONFIG_PATH . "behat.yml", $behatConfig, true)
+            ->copy($this->getDocroot() . self::CONFIG_PATH . "/behat.yml", $behatConfig, true)
             ->run();
 
         $this->title("Settings up PHPUnit!");
@@ -345,7 +307,7 @@ class InitCommands extends Tasks
         $this->say('Configuring PHPUnit at ' . $phpUnitDir);
         $this->taskFilesystemStack()
             ->touch($phpUnitConfig)
-            ->copy($this->getDocroot() . self::CONFIG_PATH . "phpunit.xml", $phpUnitConfig, true)
+            ->copy($this->getDocroot() . self::CONFIG_PATH . "/phpunit.xml", $phpUnitConfig, true)
             ->run();
     }
 }

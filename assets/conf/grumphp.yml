@@ -11,7 +11,6 @@ grumphp:
     git_branch_name:
       whitelist:
           - "/${PROJECT_PREFIX}-([0-9]*)/"
-      blacklist:
           - "develop"
           - "master"
     git_blacklist:
