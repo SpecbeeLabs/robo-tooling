@@ -17,11 +17,23 @@
         "grasmash/yaml-cli": "^2.0"
     },
     "require-dev": {
-        "ergebnis/composer-normalize": "^2.13"
+        "ergebnis/composer-normalize": "^2.13",
+        "phpstan/phpstan": "^1.8",
+        "phpstan/extension-installer": "^1.1",
+        "mglaman/phpstan-drupal": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.1",
+        "jangregor/phpstan-prophecy": "^1.0"
     },
     "autoload": {
         "psr-4": {
             "Specbee\\DevSuite\\": "src"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "phpstan/extension-installer": true
         }
     }
 }
