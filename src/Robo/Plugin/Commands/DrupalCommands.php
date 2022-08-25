@@ -35,6 +35,19 @@ class DrupalCommands extends Tasks
     public function drupalInstall($opts = ['db-url' => '', 'no-interaction|n' => false]): Result
     {
         $this->say('drupal:install');
+
+        // Database connections.
+        if (!empty($opts['db-url'])) {
+            $connection = $opts['db-url'];
+        } else {
+            $user = $this->getConfigValue('database.creds.user');
+            $pass = $this->getConfigValue('database.creds.pass');
+            $db = $this->getConfigValue('database.creds.db');
+            $host = $this->getConfigValue('database.host');
+            $driver = $this->getConfigValue('database.driver');
+            $connection = $driver . '://' . $user . ':' . $pass . '@' . $host . '/' . $db;
+        }
+
         $task = $this->drush()
             ->args('site-install')
             ->args('-v')
@@ -48,14 +61,10 @@ class DrupalCommands extends Tasks
         if ($opts['no-interaction']) {
             $task->arg('--no-interaction');
         }
-
-        if (!empty($opts['db-url'])) {
-            $task->option('db-url', $opts['db-url'], '=');
-        } else {
-            $task->option('db-url', static::DB_URL, '=');
-        }
+        $task->option('db-url', $connection, '=');
 
         $result = $task->run();
+
         if (!$result->wasSuccessful()) {
             throw new TaskException($task, "Could not install Drupal.");
         }
@@ -75,6 +84,7 @@ class DrupalCommands extends Tasks
     public function importConfig(): Result
     {
         $this->say('drupal:import:config');
+
         $this->cacheRebuild();
         $this->drush()
         ->arg('config:set')
@@ -85,7 +95,7 @@ class DrupalCommands extends Tasks
         ->option('ansi')
         ->run();
 
-        $task = $this->drush()
+        $this->drush()
         ->arg('config:import')
         ->option('ansi')
         ->option('no-interaction')
@@ -97,7 +107,7 @@ class DrupalCommands extends Tasks
         // to date configuration. Additional information and discussion can be
         // found here:
         // https://github.com/drush-ops/drush/issues/2449#issuecomment-708655673
-        $task = $task = $this->drush()
+        $task = $this->drush()
         ->arg('config:import')
         ->option('ansi')
         ->option('no-interaction')
@@ -122,12 +132,16 @@ class DrupalCommands extends Tasks
     public function updateDatabase(): Result
     {
         $this->say('drupal:update:db');
+
         $this->cacheRebuild();
         $task = $this->drush()
         ->arg('updatedb')
         ->option('ansi')
         ->option('no-interaction')
+        ->option('post-updates')
+        ->option('cache-clear')
         ->run();
+
         if (!$task->wasSuccessful()) {
             throw new TaskException($task, "Failed to execute database updates!");
         }
@@ -146,9 +160,10 @@ class DrupalCommands extends Tasks
      */
     public function syncDb($opts = ['skip-import|s' => false]): Result
     {
+        $this->say('drupal:sync:db');
+
         $machineName = $this->getConfigValue('project.machine_name');
         $remote = $this->getConfigValue('sync.remote');
-        $this->say('drupal:sync:db');
         $remote_alias = '@' . $machineName . '.' . $remote;
         $local_alias = '@self';
         $collection = $this->collectionBuilder();
@@ -171,6 +186,7 @@ class DrupalCommands extends Tasks
                 ->option('ansi')
             );
         }
+
         $result = $collection->run();
 
         if (!$result->wasSuccessful()) {
@@ -195,9 +211,10 @@ class DrupalCommands extends Tasks
      */
     public function syncFiles(): Result
     {
+        $this->say('drupal:sync:files');
+
         $machineName = $this->getConfigValue('project.machine_name');
         $remote = $this->getConfigValue('sync.remote');
-        $this->say('drupal:sync:files');
         $remote_alias = '@' . $machineName . '.' . $remote;
         $local_alias = '@self';
         $task = $this->drush()

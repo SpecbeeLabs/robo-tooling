@@ -1,25 +1,23 @@
-dev:
-  host: ${REMOTE_DEV_HOST}
-  user: ${REMOTE_DEV_USER}
-  root: ${REMOTE_DEV_ROOT}
-  uri: ${REMOTE_DEV_URI}
-  paths:
-    - files: sites/default/files
-  command:
-    sql:
-      sync:
-        options:
-          no-dump: true
+#
+# A minimalist Drush site alias file.
+# See https://www.drush.org/latest/site-aliases/ for lots more documentation.
+#
+# File: self.site.yml
 
-stage:
-  host: ${REMOTE_STAGE_HOST}
-  user: ${REMOTE_STAGE_USER}
-  root: ${REMOTE_STAGE_ROOT}
-  uri: ${REMOTE_STAGE_URI}
-  paths:
-    - files: sites/default/files
+dev:
+  uri: ""
+  host: ""
+  options: {  }
+  root: ""
+  user: ""
+  ssh: { options: '-p 22' }
   command:
     sql:
       sync:
         options:
           no-dump: true
+    rsync:
+        options:
+          mode: rlptz
+          exclude-paths: 'css:imagecache:ctools:js:tmp:php:styles'
+

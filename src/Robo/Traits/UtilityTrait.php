@@ -47,7 +47,10 @@ trait UtilityTrait
      */
     public function getExportedSiteUuid()
     {
-        $site_config_file = $this->getDocroot() . '/' . $this->getConfigValue('drupal.config.path') . '/system.site.yml';
+        $site_config_file = $this->getDocroot() . '/' .
+        $this->getConfigValue('drupal.config.path') .
+        '/system.site.yml';
+
         if (file_exists($site_config_file)) {
             $site_config = Yaml::parseFile($site_config_file);
             $site_uuid = $site_config['uuid'];
