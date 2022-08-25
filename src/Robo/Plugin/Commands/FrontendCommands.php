@@ -56,7 +56,7 @@ class FrontendCommands extends Tasks
      */
     public function themeCompile()
     {
-        $this->say('drupal:install');
+        $this->say('theme:compile');
 
         // Return early if theme is not found.
         if (!file_exists($this->getConfigValue('drupal.theme.path'))) {
