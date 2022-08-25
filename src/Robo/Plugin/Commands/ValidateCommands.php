@@ -126,7 +126,7 @@ class ValidateCommands extends Tasks
         $this->say("Validating Drupal coding standards...");
         foreach ($this->getCustomCodePaths() as $path) {
             if (!file_exists($path)) {
-                $this->warning('Path ' . $path . ' not found. PHPCS will likely fail. Skipping...');
+                $this->info('Path ' . $path . ' not found. PHPCS will likely fail.', true);
                 return $this->taskExecStack()
                 ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)
                 ->exec('echo Skipping...')
@@ -165,7 +165,6 @@ class ValidateCommands extends Tasks
             ->run();
         }
 
-        $this->say('');
         $this->info('PHPStan config file not found.', true);
             return $this->taskExecStack()
             ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_DEBUG)

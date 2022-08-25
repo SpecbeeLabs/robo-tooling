@@ -36,7 +36,7 @@ trait IO
     {
         $io = new SymfonyStyle($this->input(), $this->output());
         $char = $this->decorationCharacter('>', '➜');
-        $io->block($text, null, "options=bold;", $char);
+        $io->writeln("<options=bold;>$char $text</options=bold;>");
     }
 
     /**
