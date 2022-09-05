@@ -126,9 +126,6 @@ $settings['skip_permissions_hardening'] = TRUE;
  */
 # $settings['config_exclude_modules'] = ['devel', 'stage_file_proxy'];
 
-$config['config_split.config_split.dev']['status'] = FALSE;
-$config['config_split.config_split.stage']['status'] = FALSE;
-
 /**
  * Local database settings.
  *

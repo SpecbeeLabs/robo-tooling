@@ -278,3 +278,9 @@ if (getenv('LANDO') === 'ON' && file_exists($app_root . '/' . $site_path . '/set
 if (file_exists(DRUPAL_ROOT . '/sites/default/migration.settings.php')) {
   include DRUPAL_ROOT . '/sites/default/migration.settings.php';
 }
+
+/**
+ * Configure the config split based on environments.
+ */
+# $config['config_split.config_split.dev']['status'] = FALSE;
+# $config['config_split.config_split.stage']['status'] = FALSE;
