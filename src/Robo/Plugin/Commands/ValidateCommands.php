@@ -142,7 +142,7 @@ class ValidateCommands extends Tasks
 
         return $this->taskExecStack()
         ->stopOnFail()
-        ->exec("vendor/bin/phpcs --color -p --standard=$standards --extensions=$extensions \
+        ->exec("vendor/bin/phpcs --colors -p --standard=$standards --extensions=$extensions \
                 --ignore=$ignorePaths $this->customCodePaths")
         ->run();
     }
