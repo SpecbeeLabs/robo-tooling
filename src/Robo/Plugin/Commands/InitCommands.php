@@ -5,6 +5,7 @@ namespace Specbee\DevSuite\Robo\Plugin\Commands;
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Exception\TaskException;
 use Robo\Result;
+use Robo\ResultData;
 use Robo\Tasks;
 use Specbee\DevSuite\Robo\Traits\IO;
 use Specbee\DevSuite\Robo\Traits\UtilityTrait;
@@ -148,7 +149,7 @@ class InitCommands extends Tasks
     /**
      * Setup lando.yml for local environment.
      */
-    public function confLando($opts = ['yes|y' => false]): Result
+    public function confLando($opts = ['yes|y' => false]): ResultData
     {
         $this->say('Setup lando.yml for local environment.');
         $landoFile = $this->getDocroot() . '/.lando.yml';
@@ -192,7 +193,7 @@ class InitCommands extends Tasks
     /**
      * Setup Quality checker.
      */
-    public function confDrupalQualityChecker($opts = ['yes|y' => false]): Result
+    public function confDrupalQualityChecker($opts = ['yes|y' => false]): ResultData
     {
         $this->say('Setup Drupal quality checker.');
         $grumphpFile = $this->getDocroot() . '/grumphp.yml';
@@ -235,7 +236,7 @@ class InitCommands extends Tasks
     /**
      * Commit the changes of init:project command.
      */
-    public function commitSetup(): Result
+    public function commitSetup(): ResultData
     {
         $this->say('Committing the changes...');
         $this->say('Normalizing composer.json file...');
