@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "consolidation/robo": "^3.0",
+        "consolidation/robo": "^4.0",
         "drush-ops/behat-drush-endpoint": "^9.4",
         "drush/drush": "^11",
         "webflo/drupal-finder": "^1.2",
-        "grasmash/yaml-cli": "^2.0"
+        "grasmash/yaml-cli": "^3.0"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.13"
