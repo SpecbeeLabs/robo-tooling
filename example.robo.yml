@@ -10,6 +10,9 @@ project:
   human_name: "Specbee"
   git:
     remote: git@bitbucket.org:specbee/project-repo.git
+    user:
+      name: ''
+      email: ''
 
 # Configure the installation profile and the theme being used in the site.
 drupal:

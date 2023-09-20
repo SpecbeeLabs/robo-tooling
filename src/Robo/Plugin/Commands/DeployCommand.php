@@ -32,18 +32,19 @@ class DeployCommand extends Tasks
         }
 
         $this->branchName = $branch . "-build";
-        $this->prepareArtifact();
-        $this->sanitizeArtifact();
+        $this->buildDependencies();
+        $this->prepareDir();
         $this->addGitRemote();
         $this->checkoutLocalDeployBranch();
         $this->mergeUpstreamChanges();
+        $this->sanitizeArtifact();
         $this->push();
     }
 
     /**
      * Prepare the Artifact.
      */
-    protected function prepareArtifact()
+    protected function buildDependencies()
     {
         $this->say("Preparing the artifact...");
         $composerBuildTask = $this->taskComposerInstall()
@@ -59,6 +60,24 @@ class DeployCommand extends Tasks
 
         // Build frontend.
         $this->buildTheme();
+    }
+
+    /**
+     * Deletes the existing deploy directory and initializes git repo.
+     */
+    protected function prepareDir()
+    {
+        $this->say("Preparing artifact directory...");
+        $git_user = $this->getConfigValue("project.git.user.name");
+        $git_email = $this->getConfigValue("project.git.user.email");
+        $this->taskExecStack()
+        ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
+        ->stopOnFail()
+        ->dir($this->getDocroot())
+        ->exec("git config --local --add user.name '$git_user'")
+        ->exec("git config --local --add user.email '$git_email'")
+        ->exec("git config --local core.fileMode true")
+        ->run();
     }
 
     /**
