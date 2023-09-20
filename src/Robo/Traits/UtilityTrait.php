@@ -121,4 +121,18 @@ trait UtilityTrait
 
         return $task;
     }
+
+    /**
+     * Enable the maintenance mode of the site.
+     */
+    private function toggleMaintenanceMode($flag = 0)
+    {
+        $this->say('Disabling maintenance mode.');
+        $this->drush()
+        ->args('state:set')
+        ->args('system.maintenance_mode')
+        ->args($flag)
+        ->option('ansi')
+        ->run();
+    }
 }

@@ -71,7 +71,7 @@ class CiServiceCommand extends Tasks
 
         $task = $this->taskFilesystemStack()
         ->copy($pipelineSource, $docroot . "/bitbucket-pipelines.yml")
-        ->copy($behatConfig, $docroot . "/tests/behat/ci.behat.yml")
+        ->copy($behatConfig, $docroot . "/assets/conf/ci.behat.yml")
         ->copy($docroot . "/vendor/specbee/robo-tooling/ci/run", $docroot . "/scripts/.bitbucket/run")
         ->copy($docroot . "/vendor/specbee/robo-tooling/ci/deploy", $docroot . "/scripts/.bitbucket/deploy")
         ->run();
