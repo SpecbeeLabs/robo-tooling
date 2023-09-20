@@ -183,7 +183,7 @@ class DeployCommand extends Tasks
         $commit = trim(shell_exec("git rev-parse HEAD"));
         $message = trim(shell_exec("git log -1 --pretty=%B"));
         $task = $this->taskGitStack()
-        ->commit("Commit:" . $commit . ": " . $message, 'quiet')
+        ->commit("Commit:" . $commit . ": " . $message, '--quiet')
         ->push('upstream', $this->branchName)
         ->run();
 
