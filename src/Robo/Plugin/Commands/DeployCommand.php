@@ -35,6 +35,7 @@ class DeployCommand extends Tasks
         $this->prepareArtifact();
         $this->sanitizeArtifact();
         $this->addGitRemote();
+        $this->checkoutLocalDeployBranch();
         $this->mergeUpstreamChanges();
         $this->push();
     }
@@ -122,6 +123,23 @@ class DeployCommand extends Tasks
     }
 
     /**
+     * Checks out a new, local branch for artifact.
+     */
+    protected function checkoutLocalDeployBranch()
+    {
+        $this->taskExecStack()
+        ->dir($this->getDocroot())
+        // Create new branch locally.We intentionally use stopOnFail(FALSE) in
+        // case the branch already exists. `git checkout -B` does not seem to work
+        // as advertised.
+        // @todo perform this in a way that avoid errors completely.
+        ->stopOnFail(false)
+        ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
+        ->exec("git checkout -b {$this->branchName}")
+        ->run();
+    }
+
+    /**
      * Merges upstream changes into deploy branch.
      */
     protected function mergeUpstreamChanges()
@@ -141,7 +159,7 @@ class DeployCommand extends Tasks
      */
     protected function push()
     {
-        $this->say("Committing artifact to <comment>{$this->branchName}</comment>...");
+        $this->say("Pushing artifact to <comment>{$this->branchName}</comment>...");
 
         // Force add all dependencies.
         chdir($this->getDocroot());
@@ -165,7 +183,7 @@ class DeployCommand extends Tasks
         $commit = trim(shell_exec("git rev-parse HEAD"));
         $message = trim(shell_exec("git log -1 --pretty=%B"));
         $task = $this->taskGitStack()
-        ->commit("Commit:" . $commit . ": " . $message)
+        ->commit("Commit:" . $commit . ": " . $message, 'quiet')
         ->push('upstream', $this->branchName)
         ->run();
 
