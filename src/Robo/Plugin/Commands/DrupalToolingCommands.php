@@ -14,14 +14,6 @@ class DrupalToolingCommands extends DrupalCommands
     use IO;
 
     /**
-     * RoboFile constructor.
-     */
-    public function __construct()
-    {
-        $this->stopOnFail();
-    }
-
-    /**
      * Setting up a new Drupal site.
      *
      * @command setup

@@ -43,7 +43,6 @@ class ValidateCommands extends Tasks
      */
     public function __construct()
     {
-        $this->stopOnFail();
         $this->phpcsCheckExtensions = $this->getConfigValue('phpcs.check_extensions');
         $this->phpcsIgnorePaths = $this->getConfigValue('phpcs.ignore_paths');
         $this->customCodePaths = implode(' ', $this->getCustomCodePaths());
