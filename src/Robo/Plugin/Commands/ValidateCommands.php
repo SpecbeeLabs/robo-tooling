@@ -132,9 +132,7 @@ class ValidateCommands extends Tasks
                 ->run();
             }
         }
-        $tasks[] = $this->taskExecStack()
-        ->exec('vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer')
-        ->run();
+
         $standards = implode(',', $this->getCodingStandards());
         $extensions = implode(',', $this->phpcsCheckExtensions);
         $ignorePaths = implode(',', $this->phpcsIgnorePaths);
